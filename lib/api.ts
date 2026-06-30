@@ -42,7 +42,7 @@ async function request(endpoint: string, options: RequestOptions = {}) {
     Cookies.remove('user');
     
     const pathname = window.location.pathname;
-    const isProtected = pathname.startsWith('/dashboard') || pathname.startsWith('/admin');
+    const isProtected = pathname.startsWith('/dashboard') || pathname.startsWith('/admin') || pathname.startsWith('/bets');
     if (isProtected && pathname !== '/login' && pathname !== '/register') {
       window.location.href = '/login';
     }
@@ -73,7 +73,7 @@ async function request(endpoint: string, options: RequestOptions = {}) {
       Cookies.remove('user');
       
       const pathname = window.location.pathname;
-      const isProtected = pathname.startsWith('/dashboard') || pathname.startsWith('/admin');
+      const isProtected = pathname.startsWith('/dashboard') || pathname.startsWith('/admin') || pathname.startsWith('/bets');
       if (isProtected && pathname !== '/login' && pathname !== '/register') {
         window.location.href = '/login';
       }
@@ -181,8 +181,8 @@ export const api = {
       request('/transactions', {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       }),
-    getBets: (token?: string) => 
-      request('/transactions/bets', {
+    getBets: (token?: string | null, params?: URLSearchParams) =>
+      request(`/transactions/bets${params ? `?${params}` : ''}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       }),
 

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   ReceiptText, Clock, CheckCircle2,
   XCircle, AlertTriangle, Target,
-  ChevronRight
+  ChevronRight, AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
 import { useSocketSync } from '@/lib/use-socket-sync';
@@ -54,6 +54,7 @@ const FILTERS: { label: string; value: BetStatus | 'all' }[] = [
   { label: 'En Attente',  value: 'pending' },
   { label: 'Gagné',      value: 'won' },
   { label: 'Perdu',     value: 'lost' },
+  { label: 'Annulé',    value: 'void' },
 ];
 
 export default function BetsPage() {
@@ -63,20 +64,40 @@ export default function BetsPage() {
   const [bets, setBets] = useState<BetRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchBets = useCallback(async () => {
-    if (!token) return;
+  const fetchBets = useCallback(async (page = 1, statusFilter = filter) => {
     setLoading(true);
+    setError(null);
     try {
-      const betData = await api.transactions.getBets(token);
-      const betTransactions = Array.isArray(betData) ? betData : [];
-      setBets(betTransactions);
+      const params = new URLSearchParams({ page: String(page), limit: '20' });
+      if (statusFilter !== 'all') params.set('status', statusFilter);
+      const data = await api.transactions.getBets(token, params);
+      if (data && data.bets) {
+        if (page === 1) {
+          setBets(data.bets);
+        } else {
+          setBets(prev => [...prev, ...data.bets]);
+        }
+        setHasMore(data.hasMore);
+        setTotal(data.total);
+        setCurrentPage(page);
+      } else {
+        setBets([]);
+        setTotal(0);
+        setHasMore(false);
+      }
     } catch (err) {
       console.error('Failed to fetch bets', err);
+      setError('Erreur de chargement des paris');
+      if (page === 1) setBets([]);
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, filter]);
 
   useSocketSync(useCallback(() => {
     fetchBets();
@@ -84,12 +105,16 @@ export default function BetsPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/');
+      setBets([]);
       return;
     }
-    fetchBets();
+    setCurrentPage(1);
+    fetchBets(1, filter);
+  }, [filter, isAuthenticated, fetchBets]);
+
+  useEffect(() => {
     setMounted(true);
-  }, [isAuthenticated, router, fetchBets]);
+  }, []);
 
   const filtered = filter === 'all' ? bets : bets.filter(b => b.status.toLowerCase() === filter);
 
@@ -114,7 +139,9 @@ export default function BetsPage() {
 
         {}
         <div className="flex items-center space-x-2 mb-10 overflow-x-auto no-scrollbar pb-2">
-          {FILTERS.map(f => (
+          {FILTERS.map(f => {
+            const cnt = filter === f.value ? total : (f.value === 'all' ? bets.length : bets.filter(b => b.status.toLowerCase() === f.value).length);
+            return (
             <button
               key={f.value}
               onClick={() => setFilter(f.value)}
@@ -126,13 +153,12 @@ export default function BetsPage() {
               `}
             >
               {f.label}
-              {f.value !== 'all' && (
-                <span className="ml-2 opacity-60">
-                  {bets.filter(b => b.status.toLowerCase() === f.value).length}
-                </span>
-              )}
+              <span className="ml-2 opacity-60">
+                {cnt}
+              </span>
             </button>
-          ))}
+            );
+          })}
         </div>
 
         {}
@@ -151,6 +177,17 @@ export default function BetsPage() {
                 </div>
               </div>
             ))
+          ) : error && !loading ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
+              <p className="text-red-400 mb-4">{error}</p>
+              <button
+                onClick={() => fetchBets(1, filter)}
+                className="px-6 py-2 bg-[#1a1a2e] hover:bg-[#2a2a3e] text-white rounded-lg transition-colors"
+              >
+                Réessayer
+              </button>
+            </div>
           ) : filtered.length === 0 ? (
             <div className="bezel-shell p-2">
               <div className="bezel-core bg-black p-16 text-center">
@@ -181,7 +218,7 @@ export default function BetsPage() {
                             {mounted ? new Date(bet.createdAt).toLocaleString('en-GB', { hour12: false }) : '...'}
                           </span>
                           <span className="text-[8px] font-black text-blue-600 uppercase tracking-widest bg-blue-600/10 px-2 py-0.5 rounded-full shrink-0">
-                            {bet.type === 'parlay' ? `Combiné ×${bet.selections?.length || 0}` : bet.type}
+                            {bet.type === 'MULTIPLE' ? `Combiné ×${bet.selections?.length || 0}` : bet.type}
                           </span>
                         </div>
                         <div className="text-sm md:text-base font-black text-white uppercase tracking-tight line-clamp-2 leading-tight">
@@ -276,6 +313,18 @@ export default function BetsPage() {
             })
           )}
         </div>
+
+        {}
+        {hasMore && !loading && (
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={() => fetchBets(currentPage + 1, filter)}
+              className="px-6 py-2 bg-[#1a1a2e] hover:bg-[#2a2a3e] text-gray-300 rounded-lg transition-colors"
+            >
+              Charger plus ({bets.length} / {total})
+            </button>
+          </div>
+        )}
 
         {}
         {!loading && bets.length > 0 && (

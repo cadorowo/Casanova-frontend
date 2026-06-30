@@ -81,8 +81,8 @@ export default function DashboardPage() {
   const historyItems = [
     ...bets.map(b => ({
       _id: b._id,
-      type: b.status === 'WON' ? 'win' : b.status === 'LOST' ? 'loss' : 'sports_bet',
-      amount: b.status === 'WON' ? b.stake * b.totalOdds : b.stake,
+      type: b.status === 'won' ? 'win' : b.status === 'lost' ? 'loss' : 'sports_bet',
+      amount: b.status === 'won' ? b.stake * b.totalOdds : b.stake,
       status: b.status.toLowerCase(), 
       createdAt: b.createdAt,
       desc: b.type === 'SINGLE' ? 'Pari Simple' : 'Pari Combiné',
