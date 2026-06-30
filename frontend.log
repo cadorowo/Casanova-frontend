@@ -1,0 +1,33 @@
+﻿
+> frontend@0.1.0 dev
+> next dev -H 0.0.0.0 --turbopack
+
+   Γû▓ Next.js 15.5.15 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://0.0.0.0:3000
+   - Environments: .env.local
+
+ Γ£ô Starting...
+ Γ£ô Compiled middleware in 254ms
+ Γ£ô Ready in 2.2s
+ Γùï Compiling / ...
+ Γ£ô Compiled / in 4.2s
+ GET / 200 in 275ms
+ Γ£ô Compiled /sports in 478ms
+ GET /sports 200 in 697ms
+ Γ£ô Compiled /login in 404ms
+ GET /login 200 in 633ms
+[Middleware] Path: /dashboard, Role: user
+ Γ£ô Compiled /dashboard in 469ms
+ GET /dashboard 200 in 624ms
+ Γùï Compiling /deposit ...
+ Γ£ô Compiled /deposit in 950ms
+ GET /deposit 200 in 1298ms
+[Middleware] Path: /dashboard, Role: user
+ GET /dashboard 200 in 487ms
+ GET /login 200 in 286ms
+[Middleware] Path: /dashboard, Role: user
+ GET /dashboard 200 in 181ms
+ GET /deposit 200 in 521ms
+[Middleware] Path: /dashboard, Role: user
+ GET /dashboard 200 in 364ms

@@ -1,0 +1,36 @@
+{
+  "colors": {
+    "brand": {
+      "gold": { "value": "#d3a936", "type": "color" },
+      "blue": { "value": "#2563eb", "type": "color" }
+    },
+    "surface": {
+      "background": { "value": "#000000", "type": "color" },
+      "card": { "value": "#000000", "type": "color" },
+      "overlay": { "value": "rgba(255, 255, 255, 0.05)", "type": "color" }
+    },
+    "text": {
+      "primary": { "value": "#ffffff", "type": "color" },
+      "secondary": { "value": "#9ca3af", "type": "color" },
+      "accent": { "value": "#d3a936", "type": "color" }
+    },
+    "border": {
+      "subtle": { "value": "rgba(255, 255, 255, 0.1)", "type": "color" },
+      "focus": { "value": "#2563eb", "type": "color" }
+    }
+  },
+  "spacing": {
+    "xs": { "value": "0.5rem", "type": "spacing" },
+    "sm": { "value": "1rem", "type": "spacing" },
+    "md": { "value": "1.5rem", "type": "spacing" },
+    "lg": { "value": "2rem", "type": "spacing" },
+    "xl": { "value": "3rem", "type": "spacing" }
+  },
+  "radius": {
+    "sm": { "value": "0.5rem", "type": "radius" },
+    "md": { "value": "1rem", "type": "radius" },
+    "lg": { "value": "1.5rem", "type": "radius" },
+    "xl": { "value": "2.5rem", "type": "radius" }
+  }
+}
+
