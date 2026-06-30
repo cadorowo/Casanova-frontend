@@ -51,12 +51,9 @@ function AdminCreditsContent() {
     if (!token || !phone) return;
     setIsLoadingPlayerLogs(true);
     try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL as string;
       const [data, betsRes] = await Promise.all([
         api.admin.getUserActivity(token, phone),
-        fetch(`${API_BASE_URL}/admin/users/${phone}/bets`, {
-          credentials: 'include',
-        }).then(r => r.json()).catch(() => [])
+        api.admin.getUserBets(token, phone)
       ]);
       setPlayerLogs(data);
       const betsArr = betsRes?.success && betsRes?.data ? betsRes.data : betsRes;

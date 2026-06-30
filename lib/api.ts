@@ -282,5 +282,9 @@ export const api = {
       request(`/admin/users/${phone}/transactions`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       }),
+    getUserBets: (token: string, phone: string) =>
+      request(`/admin/users/${phone}/bets`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
   },
 };
