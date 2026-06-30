@@ -35,7 +35,7 @@ export default function DashboardPage() {
         api.transactions.getBets(token!)
       ]);
       setTransactions(txData);
-      setBets(betData || []);
+      setBets(betData?.bets || []);
     } catch (err) {
       console.error('Failed to fetch dashboard data', err);
     }
