@@ -131,7 +131,7 @@ export default function BetsPage() {
       <div className="max-w-[1400px] mx-auto px-4 md:px-12 pt-12 md:pt-20">
         
         {}
-        <div className="px-6 py-4 border-b border-white/5 bg-white/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 rounded-2xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
            <div className="flex items-center space-x-3">
               <div className="w-1.5 h-1.5 rounded-full bg-blue-600" />
               <h1 className="text-xl font-black text-white uppercase tracking-widest">Mes Paris</h1>
