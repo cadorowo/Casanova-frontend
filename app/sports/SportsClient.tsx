@@ -50,7 +50,7 @@ const SportsSkeleton = () => (
   </div>
 );
 
-export default function SportsPage() {
+export default function SportsPage({ initialMatches }: { initialMatches?: any }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sportParam = searchParams.get('sport');

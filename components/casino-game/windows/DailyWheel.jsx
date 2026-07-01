@@ -2,7 +2,7 @@ import React from "react";
 import { EE } from "../App";
 import "../css/dailywheel.css";
 import { PAGE_SIZE_DEFAULT } from "../common/Config";
-import { transform } from "lodash";
+import { } from "lodash";
 
 const list = [
     { startDeg: 351, endDeg: 10, value: 1, textDeg: 271 },

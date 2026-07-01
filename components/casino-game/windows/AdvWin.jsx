@@ -107,7 +107,7 @@ export class AdvWin extends React.Component {
 					</div>
 				</div>
 				<div className="modal-window-fill-backevent"
-					 onClick={(e) => this.setState({keyboardVisible: false})}
+					 onClick={() => this.setState({keyboardVisible: false})}
 				/>
 			</div>
 		)

@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useRouter } from 'next/navigation';
 import {
   ReceiptText, Clock, CheckCircle2,
   XCircle, AlertTriangle, Target,
@@ -58,7 +59,7 @@ const FILTERS: { label: string; value: BetStatus | 'all' }[] = [
 
 export default function BetsPage() {
   const { token, isAuthenticated } = useAuth();
-
+  const router = useRouter();
   const [filter, setFilter] = useState<BetStatus | 'all'>('all');
   const [timeRange, setTimeRange] = useState('7d');
   const [bets, setBets] = useState<BetRecord[]>([]);
@@ -228,7 +229,7 @@ export default function BetsPage() {
           ) : (
             filtered.map((bet, i) => {
               const cfg = STATUS_CONFIG[(bet.status.toLowerCase()) as BetStatus] || STATUS_CONFIG.pending;
-
+              const StatusIcon = cfg.icon;
 
               return (
                 <div

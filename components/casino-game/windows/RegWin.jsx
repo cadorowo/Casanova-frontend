@@ -320,7 +320,7 @@ export class RegWin extends React.Component {
                 {this.state.keyboardVisible && (
                     <div
                         className="modal-window-fill-backevent"
-                        onClick={(e) =>
+                        onClick={() =>
                             this.setState({ keyboardVisible: false })
                         }
                     />
