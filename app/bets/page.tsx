@@ -68,6 +68,7 @@ export default function BetsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [total, setTotal] = useState(0);
+  const [stats, setStats] = useState<Record<string, number>>({ all: 0, pending: 0, won: 0, lost: 0, void: 0 });
   const [error, setError] = useState<string | null>(null);
 
   const fetchBets = useCallback(async (page = 1, statusFilter = filter, tr = timeRange) => {
@@ -85,10 +86,12 @@ export default function BetsPage() {
         }
         setHasMore(data.hasMore);
         setTotal(data.total);
+        if (data.stats) setStats(data.stats);
         setCurrentPage(page);
       } else {
         setTimeout(() => setBets([]), 0);
         setTotal(0);
+        setStats({ all: 0, pending: 0, won: 0, lost: 0, void: 0 });
         setHasMore(false);
       }
     } catch (err) {
@@ -167,7 +170,7 @@ export default function BetsPage() {
         {}
         <div className="flex items-center space-x-2 mb-10 overflow-x-auto no-scrollbar pb-2">
           {FILTERS.map(f => {
-            const cnt = filter === f.value ? total : (f.value === 'all' ? bets.length : bets.filter(b => b.status.toLowerCase() === f.value).length);
+            const cnt = stats[f.value] !== undefined ? stats[f.value] : 0;
             return (
             <button
               key={f.value}
