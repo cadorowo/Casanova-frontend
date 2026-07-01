@@ -622,7 +622,7 @@ export default function MatchDetailsPage() {
       <div className={`relative h-[260px] sm:h-[340px] overflow-hidden ${match.live ? '' : ''}`}>
          {}
          <div className="absolute inset-0 bg-blue-600/10 blur-[120px] rounded-full scale-150" />
-         <div className="absolute inset-0 bg-gradient-to-b from-[#000000]/50 via-[#000000] to-[#000000]" />
+         <div className="absolute inset-0 bg-[#000000]" />
          
          <div className="relative h-full max-w-[1200px] mx-auto px-6 pt-6 sm:pt-10 pb-4 sm:pb-8 flex flex-col">
             {}
@@ -643,7 +643,7 @@ export default function MatchDetailsPage() {
             <div className="flex-1 flex items-center justify-between px-2 sm:px-12 max-w-[800px] mx-auto w-full">
                {}
                <div className="flex flex-col items-center flex-1 min-w-0">
-                  <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-white/10 to-transparent p-2.5 sm:p-4 mb-3 sm:mb-4 border border-white/5 shadow-2xl flex items-center justify-center overflow-hidden shrink-0">
+                  <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-transparent p-2.5 sm:p-4 mb-3 sm:mb-4 border border-white/5 shadow-2xl flex items-center justify-center overflow-hidden shrink-0">
                      {homeLogo ? (
                         <Image 
                           src={homeLogo} 
@@ -723,7 +723,7 @@ export default function MatchDetailsPage() {
 
                {}
                <div className="flex flex-col items-center flex-1 min-w-0">
-                  <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-white/10 to-transparent p-2.5 sm:p-4 mb-3 sm:mb-4 border border-white/5 shadow-2xl flex items-center justify-center overflow-hidden shrink-0">
+                  <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-transparent p-2.5 sm:p-4 mb-3 sm:mb-4 border border-white/5 shadow-2xl flex items-center justify-center overflow-hidden shrink-0">
                      {awayLogo ? (
                         <Image 
                           src={awayLogo} 
