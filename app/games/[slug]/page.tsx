@@ -247,13 +247,7 @@ export default function GameDetailPage() {
     medium: 'Moyenne',
     high: 'Haute',
   };
-  const formatPercent = (value?: number) => {
-    if (typeof value !== 'number' || !Number.isFinite(value)) return 'N/A';
-    return `${new Intl.NumberFormat('fr-TN', {
-      minimumFractionDigits: value % 1 === 0 ? 0 : 1,
-      maximumFractionDigits: 1,
-    }).format(value)}%`;
-  };
+
   const formatTnd = (value?: number) => {
     if (typeof value !== 'number' || !Number.isFinite(value)) return 'N/A';
     return `${new Intl.NumberFormat('fr-TN', {
