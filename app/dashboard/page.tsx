@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
 import { Transaction } from '@/types';
-import { Wallet, ArrowUpRight, ArrowDown, Plus, Target, TrendingUp, CheckCircle2, History, Banknote, ReceiptText, Check, XCircle } from 'lucide-react';
+import { Wallet, ArrowUpRight, ArrowDown, Plus, Target, TrendingUp, CheckCircle2, History, Banknote, ReceiptText, Check, XCircle, Gamepad2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSocketSync } from '@/lib/use-socket-sync';
@@ -17,6 +17,11 @@ interface Bet {
   totalOdds: number;
   createdAt: string;
   type: string;
+  payout?: number;
+  recordType?: string;
+  initialBalance?: number;
+  finalBalance?: number;
+  gameName?: string;
 }
 
 export default function DashboardPage() {
@@ -81,15 +86,30 @@ export default function DashboardPage() {
   const paginatedFlowLogs = flowLogs.slice((safeFlowPage - 1) * flowPerPage, safeFlowPage * flowPerPage);
 
   const historyItems = [
-    ...bets.map(b => ({
-      _id: b._id,
-      type: b.status === 'won' ? 'win' : b.status === 'lost' ? 'loss' : 'sports_bet',
-      amount: b.status === 'won' ? b.stake * b.totalOdds : b.stake,
-      status: b.status.toLowerCase(), 
-      createdAt: b.createdAt,
-      desc: b.type === 'SINGLE' ? 'Pari Simple' : 'Pari Combiné',
-      originalType: 'sports'
-    }))
+    ...bets.map(b => {
+      if (b.recordType === 'casino') {
+        const netResult = (b.finalBalance || 0) - (b.initialBalance || 0);
+        return {
+          _id: b._id,
+          type: 'casino_session',
+          amount: Math.abs(netResult),
+          status: 'completed',
+          createdAt: b.createdAt,
+          desc: 'CASINO',
+          originalType: 'casino',
+          netResult
+        };
+      }
+      return {
+        _id: b._id,
+        type: b.status === 'won' ? 'win' : b.status === 'lost' ? 'loss' : 'sports_bet',
+        amount: b.status === 'won' ? (b.payout !== undefined ? b.payout : b.stake * (b.totalOdds || 1)) : b.stake,
+        status: b.status.toLowerCase(), 
+        createdAt: b.createdAt,
+        desc: b.type === 'SINGLE' ? 'Pari Simple' : 'Pari Combiné',
+        originalType: 'sports'
+      };
+    })
   ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const historyPerPage = 10;
@@ -352,7 +372,14 @@ export default function DashboardPage() {
                         let statusColor = 'bg-gray-500/10 border-gray-500/20 text-gray-500';
                         let displayStatus = String(item.status || '').toUpperCase();
 
-                        if (isWin) {
+                        if (item.type === 'casino_session') {
+                          Icon = Gamepad2;
+                          iconBg = 'bg-gray-500/10';
+                          iconColor = 'text-gray-400';
+                          amountSign = item.netResult > 0 ? '+' : item.netResult < 0 ? '-' : '';
+                          statusColor = 'bg-gray-500/10 border-gray-500/20 text-gray-500';
+                          displayStatus = 'TERMINÉ';
+                        } else if (isWin) {
                           Icon = item.originalType === 'sports' ? ReceiptText : CheckCircle2;
                           iconBg = item.originalType === 'sports' ? 'bg-gray-500/10' : 'bg-yellow-500/10';
                           iconColor = item.originalType === 'sports' ? 'text-gray-400' : 'text-yellow-500';
@@ -385,10 +412,6 @@ export default function DashboardPage() {
                           amountSign = '+';
                           statusColor = 'bg-gray-500/10 border-gray-500/20 text-gray-500';
                           displayStatus = 'ANNULÉ';
-                        }
-
-                        if (item.originalType === 'casino') {
-                          Icon = Banknote;
                         }
 
                         return (
