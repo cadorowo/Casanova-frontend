@@ -11,12 +11,17 @@ async function tryRefresh(): Promise<boolean> {
   
   const currentRefreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
   
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
   refreshPromise = fetch(`${API_BASE_URL}/auth/refresh`, { 
     method: 'POST', 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken: currentRefreshToken }),
-    credentials: 'include' 
+    credentials: 'include',
+    signal: controller.signal
   }).then(async r => {
+    clearTimeout(timeoutId);
     isRefreshing = false;
     if (r.ok) {
       const data = await r.json();
@@ -30,6 +35,7 @@ async function tryRefresh(): Promise<boolean> {
     }
     return false;
   }).catch(() => {
+    clearTimeout(timeoutId);
     isRefreshing = false;
     return false;
   });
@@ -51,7 +57,20 @@ async function request(endpoint: string, options: RequestOptions = {}) {
     }
   }
 
-  const response = await fetch(url, { ...options, headers, credentials: 'include' });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  let response;
+  try {
+    response = await fetch(url, { ...options, headers, credentials: 'include', signal: controller.signal });
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw new Error('La requête a expiré (10s). Veuillez vérifier votre connexion.');
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
   
   const isAuthEndpoint = endpoint.includes('/auth/login') || endpoint.includes('/auth/register');
   if (response.status === 401 && typeof window !== 'undefined' && !isAuthEndpoint) {
