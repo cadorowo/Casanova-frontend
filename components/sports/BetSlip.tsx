@@ -143,7 +143,7 @@ export default function BetSlip() {
                     <CheckCircle2 size={48} className="text-green-500" />
                   </div>
                   <h4 className="text-3xl font-black text-white uppercase tracking-tighter mb-3">Commande Envoyée</h4>
-                  <p className="text-[10px] text-gray-500 uppercase font-black tracking-[0.3em]">En attente de règlement</p>
+                  <p className="text-[10px] text-gray-500 uppercase font-black tracking-[0.3em]">Attente de règlement</p>
                 </div>
               ) : (
                 selections.map((sel) => (

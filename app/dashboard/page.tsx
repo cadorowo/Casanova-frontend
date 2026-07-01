@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
 import { Transaction } from '@/types';
-import { Wallet, ArrowUpRight, Plus, Target, TrendingUp, CheckCircle2, History, Banknote } from 'lucide-react';
+import { Wallet, ArrowUpRight, Plus, Target, TrendingUp, CheckCircle2, History, Banknote, ReceiptText } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSocketSync } from '@/lib/use-socket-sync';
@@ -272,8 +272,9 @@ export default function DashboardPage() {
                         let displayStatus = item.status.toUpperCase();
 
                         if (isWin) {
-                          Icon = CheckCircle2;
-                          iconBg = 'bg-yellow-500/10';
+                          Icon = item.originalType === 'sports' ? ReceiptText : CheckCircle2;
+                          iconBg = item.originalType === 'sports' ? 'bg-gray-500/10' : 'bg-yellow-500/10';
+                          iconColor = item.originalType === 'sports' ? 'text-gray-400' : 'text-yellow-500';
                           amountSign = '+';
                           statusColor = 'bg-green-500/10 border-green-500/20 text-green-500';
                           displayStatus = 'GAGNÉ';
@@ -285,13 +286,13 @@ export default function DashboardPage() {
                           statusColor = 'bg-red-500/10 border-red-500/20 text-red-500';
                           displayStatus = item.type === 'bet' ? 'JOUÉ' : 'PERDU';
                         } else if (item.type === 'sports_bet') {
-                          Icon = TrendingUp;
-                          iconBg = 'bg-blue-600/10';
-                          iconColor = 'text-blue-500';
+                          Icon = ReceiptText;
+                          iconBg = 'bg-gray-500/10';
+                          iconColor = 'text-gray-400';
                           amountSign = '-';
                           if (isPending) {
                             statusColor = 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500';
-                            displayStatus = 'EN ATTENTE';
+                            displayStatus = 'ATTENTE';
                           } else {
                             statusColor = 'bg-red-500/10 border-red-500/20 text-red-500';
                             displayStatus = 'PERDU';
@@ -332,7 +333,7 @@ export default function DashboardPage() {
                               <div className={`w-8 h-6 md:w-auto px-2 py-0.5 rounded-full border text-[7px] font-black uppercase tracking-widest flex items-center justify-center space-x-1 ${statusColor}`}>
                                 <div className={`w-1 h-1 rounded-full ${isPending ? 'animate-pulse' : ''} ${
                                   displayStatus === 'GAGNÉ' ? 'bg-green-500' :
-                                  displayStatus === 'EN ATTENTE' ? 'bg-yellow-500' : 'bg-red-500'
+                                  displayStatus === 'ATTENTE' ? 'bg-yellow-500' : 'bg-red-500'
                                 }`} />
                                 <span className="hidden md:inline">{displayStatus}</span>
                               </div>

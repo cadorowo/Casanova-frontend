@@ -9,7 +9,8 @@ import {
   ArrowUpRight,
   Target,
   Gamepad2,
-  Plus
+  Plus,
+  ReceiptText
 } from 'lucide-react';
 
 import { api } from '@/lib/api';
@@ -547,9 +548,9 @@ function AdminCreditsContent() {
                       <div className="space-y-1 md:max-h-[520px] md:overflow-y-auto custom-scrollbar pr-2">
                         {paginatedGameLogs.map((log, i) => {
                         const isCasino = log.type === 'casino_bet' || log.type === 'casino_win';
-                        const Icon = isCasino ? Gamepad2 : Target;
-                        const iconBg = 'bg-white/5';
-                        const iconColor = 'text-gray-500';
+                        const Icon = isCasino ? Gamepad2 : ReceiptText;
+                        const iconBg = isCasino ? 'bg-white/5' : 'bg-gray-500/10';
+                        const iconColor = isCasino ? 'text-gray-500' : 'text-gray-400';
                         const amountColor = 'text-white';
                         const label = isCasino ? 'PARI CASINO' : 'PARI SPORTIF';
                         const stake = (log as FinancialLog & { stake?: number; win?: number }).stake ?? ((log.type === 'bet' || log.type === 'casino_bet') ? log.amount : 0);
@@ -561,7 +562,7 @@ function AdminCreditsContent() {
                           log.status === 'lost' ? 'PERDU' :
                           log.status === 'failed' ? 'ANNULE' :
                           log.status === 'completed' ? ((log.type === 'bet' || log.type === 'casino_bet') ? 'PLACE' : 'PAYE') :
-                          log.status === 'pending' ? 'EN ATTENTE' :
+                          log.status === 'pending' ? 'ATTENTE' :
                           log.status.toUpperCase();
                         const statusColor =
                           (displayStatus === 'GAGNE' || displayStatus === 'PLACE' || displayStatus === 'PAYE')

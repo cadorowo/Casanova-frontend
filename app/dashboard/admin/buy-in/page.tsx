@@ -73,16 +73,16 @@ export default function AdminBuyInPage() {
                       </div>
                       
                       <h2 className="text-5xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6">
-                         AUTORISATION <span className="gold-text">EN ATTENTE</span>
+                         AUTORISATION <span className="gold-text">ATTENTE</span>
                       </h2>
                       
                       <div className="inline-flex items-center space-x-3 px-6 py-2 bg-white/5 rounded-full border border-white/10 mb-10">
                          <div className="w-2 h-2 rounded-full bg-[#d3a936] animate-ping" />
-                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">En attente de la signature Master</span>
+                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Attente de la signature Master</span>
                       </div>
 
                       <p className="max-w-md mx-auto text-gray-500 font-medium leading-relaxed mb-12">
-                         Demande soumise. En attente de l&apos;autorisation Master.
+                         Demande soumise. Attente de l&apos;autorisation Master.
                       </p>
 
                       <div className="flex items-center justify-center space-x-2">

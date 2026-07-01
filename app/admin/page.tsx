@@ -146,7 +146,7 @@ export default function AdminPage() {
 
   const getStatusConfig = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'pending': return { color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', label: 'En Attente' };
+      case 'pending': return { color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', label: 'Attente' };
       case 'completed': 
       case 'won': return { color: 'text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/20', label: 'Approuvé' };
       case 'failed':
@@ -224,7 +224,7 @@ export default function AdminPage() {
                              <div className="flex items-center space-x-2">
                                <div className="w-1 h-1 bg-yellow-500 rounded-full animate-pulse" />
                                <span className="text-[7px] font-black text-yellow-500 uppercase tracking-widest">
-                                 {pendingRequests.length} En Attente
+                                 {pendingRequests.length} Attente
                                </span>
                              </div>
                            )}

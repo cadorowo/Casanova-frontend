@@ -53,7 +53,7 @@ export default function DepositPage() {
       });
 
       if (response && (response._id || response.id)) {
-        setSuccess('Demande soumise. En attente de l\'autorisation Master.');
+        setSuccess('Demande soumise. Attente de l\'autorisation Master.');
         setAmount('');
         await refreshBalance();
         setTimeout(() => router.push('/dashboard'), 3000);

@@ -62,7 +62,7 @@ export default function WithdrawPage() {
       });
 
       if (response.newBalance !== undefined) {
-        setSuccess(`Demande soumise ! Votre retrait en attente est de ${withdrawAmount.toFixed(1)} TND.`);
+        setSuccess(`Demande soumise ! Votre retrait attente est de ${withdrawAmount.toFixed(1)} TND.`);
         setAmount('');
         await refreshBalance();
         setTimeout(() => router.push('/dashboard'), 3000);

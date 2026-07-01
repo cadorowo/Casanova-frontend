@@ -45,13 +45,13 @@ import { LucideIcon } from 'lucide-react';
 const STATUS_CONFIG: Record<BetStatus, { label: string; icon: LucideIcon; color: string; bg: string }> = {
   won:     { label: 'Gagné',   icon: CheckCircle2,   color: 'text-green-400',  bg: 'bg-green-500/10 border-green-500/20' },
   lost:    { label: 'Perdu',   icon: XCircle,        color: 'text-red-400',    bg: 'bg-red-500/10 border-red-500/20' },
-  pending: { label: 'En Attente', icon: Clock,          color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20' },
+  pending: { label: 'Attente', icon: Clock,          color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20' },
   void:    { label: 'Annulé',  icon: AlertTriangle,  color: 'text-gray-400',   bg: 'bg-white/5 border-white/10' },
 };
 
 const FILTERS: { label: string; value: BetStatus | 'all' }[] = [
   { label: 'Tous les Paris', value: 'all' },
-  { label: 'En Attente',  value: 'pending' },
+  { label: 'Attente',  value: 'pending' },
   { label: 'Gagné',      value: 'won' },
   { label: 'Perdu',     value: 'lost' },
   { label: 'Annulé',    value: 'void' },
@@ -227,12 +227,13 @@ export default function BetsPage() {
                       </div>
                       {}
                       <div className={`shrink-0 flex items-center space-x-2 px-3 py-1.5 rounded-full border text-[8px] font-black uppercase tracking-widest ${cfg.bg} ${cfg.color}`}>
-                        <StatusIcon size={10} className="shrink-0" />
+                        {bet.status.toLowerCase() !== 'won' && <ReceiptText size={10} className="shrink-0 text-blue-500" />}
                         <span className="whitespace-nowrap">{cfg.label}</span>
                       </div>
                     </div>
 
-                    {}
+
+                    {}
                     {bet.selections && bet.selections.length > 0 && (
                       <div className="space-y-4 mb-8">
                         {bet.selections.map((sel, j) => (
