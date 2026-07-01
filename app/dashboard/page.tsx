@@ -41,7 +41,7 @@ export default function DashboardPage() {
     try {
       const [txData, betData] = await Promise.all([
         api.transactions.getAll(token!, flowDays),
-        api.transactions.getBets(token!, undefined, betsDays)
+        api.transactions.getBets(token!, new URLSearchParams({ includeCasino: 'true' }), betsDays)
       ]);
       setTransactions(txData);
       setBets(betData?.bets || []);
