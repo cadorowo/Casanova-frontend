@@ -47,7 +47,7 @@ export default function AdminBuyInPage() {
   return (
     <div className="min-h-full bg-[#000000] pt-12 md:pt-20 px-4 md:px-12 pb-32 relative animate-reveal">
       <div className="max-w-[1400px] mx-auto relative z-10">
-        <Link href="/admin" className="inline-flex items-center space-x-2 text-gray-500 hover:text-white mb-12 group transition-colors">
+        <Link href="/admin" className="relative z-50 inline-flex items-center space-x-2 text-gray-500 hover:text-white mb-12 group transition-colors">
           <ArrowLeft size={16} className="transform group-hover:-translate-x-1 transition-transform" />
           <span className="text-[10px] font-black uppercase tracking-widest">Retour au Centre de Commande</span>
         </Link>

@@ -177,14 +177,18 @@ export const api = {
   },
 
   transactions: {
-    getAll: (token?: string) => 
-      request('/transactions', {
+    getAll: (token?: string, days?: number) => 
+      request(`/transactions${days ? `?days=${days}` : ''}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       }),
-    getBets: (token?: string | null, params?: URLSearchParams) =>
-      request(`/transactions/bets${params ? `?${params}` : ''}`, {
+    getBets: (token?: string | null, params?: URLSearchParams, days?: number) => {
+      const p = params ? new URLSearchParams(params.toString()) : new URLSearchParams();
+      if (days) p.append('days', days.toString());
+      const q = p.toString();
+      return request(`/transactions/bets${q ? `?${q}` : ''}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
-      }),
+      });
+    },
 
     deposit: (token?: string, data?: { amount: number; paymentMethod: string }) => 
       request('/transactions/deposits', {
@@ -270,20 +274,23 @@ export const api = {
         },
         body: JSON.stringify(data),
       }),
-    getFinancialLogs: (token?: string) => 
-      request('/admin/financial-logs', {
+    getFinancialLogs: (token?: string, days?: number) => 
+      request(`/admin/financial-logs${days ? `?days=${days}` : ''}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       }),
-    getUsers: (token?: string) => 
-      request('/admin/users', {
+    getUsers: (token?: string, search?: string) => {
+      const url = search ? `/admin/users?search=${encodeURIComponent(search)}` : '/admin/users';
+      return request(url, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
-      }),
-    getUserActivity: (token?: string, phone?: string) => 
-      request(`/admin/users/${phone}/transactions`, {
+      });
+    },
+    getUserActivity: (token?: string, phone?: string, days?: number) => 
+      request(`/admin/users/${phone}/transactions${days ? `?days=${days}` : ''}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
+        cache: 'no-store',
       }),
-    getUserBets: (token: string, phone: string) =>
-      request(`/admin/users/${phone}/bets`, {
+    getUserBets: (token: string, phone: string, days?: number) =>
+      request(`/admin/users/${phone}/bets${days ? `?days=${days}` : ''}`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
   },

@@ -61,6 +61,7 @@ export default function BetsPage() {
   const { token, isAuthenticated } = useAuth();
   const router = useRouter();
   const [filter, setFilter] = useState<BetStatus | 'all'>('all');
+  const [timeRange, setTimeRange] = useState('7d');
   const [bets, setBets] = useState<BetRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -69,13 +70,13 @@ export default function BetsPage() {
   const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBets = useCallback(async (page = 1, statusFilter = filter) => {
+  const fetchBets = useCallback(async (page = 1, statusFilter = filter, tr = timeRange) => {
     setLoading(true);
     setError(null);
     try {
       const params = new URLSearchParams({ page: String(page), limit: '20' });
       if (statusFilter !== 'all') params.set('status', statusFilter);
-      const data = await api.transactions.getBets(token, params);
+      const data = await api.transactions.getBets(token, params, parseInt(tr.replace('d', '')));
       if (data && data.bets) {
         if (page === 1) {
           setBets(data.bets);
@@ -97,7 +98,7 @@ export default function BetsPage() {
     } finally {
       setLoading(false);
     }
-  }, [token, filter]);
+  }, [token, filter, timeRange]);
 
   useSocketSync(useCallback(() => {
     fetchBets();
@@ -109,8 +110,8 @@ export default function BetsPage() {
       return;
     }
     setCurrentPage(1);
-    fetchBets(1, filter);
-  }, [filter, isAuthenticated, fetchBets]);
+    fetchBets(1, filter, timeRange);
+  }, [filter, timeRange, isAuthenticated, fetchBets]);
 
   useEffect(() => {
     setMounted(true);
@@ -130,10 +131,35 @@ export default function BetsPage() {
       <div className="max-w-[1400px] mx-auto px-4 md:px-12 pt-12 md:pt-20">
         
         {}
-        <div className="mb-8">
-           <div className="flex items-center space-x-3 mb-2">
+        <div className="px-6 py-4 border-b border-white/5 bg-white/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 rounded-2xl">
+           <div className="flex items-center space-x-3">
               <div className="w-1.5 h-1.5 rounded-full bg-blue-600" />
               <h1 className="text-xl font-black text-white uppercase tracking-widest">Mes Paris</h1>
+           </div>
+           <div className="flex items-center space-x-2 self-start sm:self-center">
+              <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Période:</span>
+              <div className="flex gap-1.5">
+                {[
+                  { value: '7d', label: '7 Jours' },
+                  { value: '15d', label: '15 Jours' },
+                  { value: '30d', label: '30 Jours' }
+                ].map((timeTab) => (
+                  <button
+                    key={timeTab.value}
+                    onClick={() => {
+                      setTimeRange(timeTab.value);
+                      setCurrentPage(1);
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all duration-200 ${
+                      timeRange === timeTab.value
+                        ? 'bg-blue-600/15 border border-blue-600/40 text-blue-500'
+                        : 'bg-white/5 border border-white/5 text-gray-600 hover:text-white'
+                    }`}
+                  >
+                    {timeTab.label}
+                  </button>
+                ))}
+              </div>
            </div>
         </div>
 

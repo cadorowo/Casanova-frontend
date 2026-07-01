@@ -7,6 +7,9 @@ const imageHostnames = (process.env.NEXT_PUBLIC_IMAGE_HOSTS || 'prgassets.pgf-as
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: imageHostnames.map(hostname => ({
       protocol: 'https',

@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
 import { Transaction } from '@/types';
-import { Wallet, ArrowUpRight, Plus, Target, TrendingUp, CheckCircle2, History, Banknote, ReceiptText } from 'lucide-react';
+import { Wallet, ArrowUpRight, ArrowDown, Plus, Target, TrendingUp, CheckCircle2, History, Banknote, ReceiptText, Check, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSocketSync } from '@/lib/use-socket-sync';
@@ -27,19 +27,23 @@ export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
   const [flowPage, setFlowPage] = useState(1);
   const [historyPage, setHistoryPage] = useState(1);
+  const [flowTimeRange, setFlowTimeRange] = useState('7d');
+  const [betsTimeRange, setBetsTimeRange] = useState('7d');
 
   const fetchDashboardData = useCallback(async () => {
+    const flowDays = parseInt(flowTimeRange.replace('d', '')) || 7;
+    const betsDays = parseInt(betsTimeRange.replace('d', '')) || 7;
     try {
       const [txData, betData] = await Promise.all([
-        api.transactions.getAll(token!),
-        api.transactions.getBets(token!)
+        api.transactions.getAll(token!, flowDays),
+        api.transactions.getBets(token!, undefined, betsDays)
       ]);
       setTransactions(txData);
       setBets(betData?.bets || []);
     } catch (err) {
       console.error('Failed to fetch dashboard data', err);
     }
-  }, [token]);
+  }, [token, flowTimeRange, betsTimeRange]);
 
   useSocketSync(useCallback(() => {
     fetchDashboardData();
@@ -147,13 +151,39 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl">
+
+        <div className="grid grid-cols-1 gap-8 max-w-6xl">
           {}
           <div className="bezel-shell p-1">
             <div className="bezel-core bg-black rounded-[2rem] overflow-hidden h-full flex flex-col">
-              <div className="p-5 md:p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+              <div className="px-6 py-4 border-b border-white/5 bg-white/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center space-x-4">
                   <h2 className="text-xl font-black text-white uppercase tracking-tighter">Dépôts & Retraits</h2>
+                </div>
+                <div className="flex items-center space-x-2 self-start sm:self-center">
+                  <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Période:</span>
+                  <div className="flex gap-1.5">
+                    {[
+                      { value: '7d', label: '7 Jours' },
+                      { value: '15d', label: '15 Jours' },
+                      { value: '30d', label: '30 Jours' }
+                    ].map((timeTab) => (
+                      <button
+                        key={timeTab.value}
+                        onClick={() => {
+                          setFlowTimeRange(timeTab.value);
+                          setFlowPage(1);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all duration-200 ${
+                          flowTimeRange === timeTab.value
+                            ? 'bg-blue-600/15 border border-blue-600/40 text-blue-500'
+                            : 'bg-white/5 border border-white/5 text-gray-600 hover:text-white'
+                        }`}
+                      >
+                        {timeTab.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="p-4 md:p-6 flex flex-col flex-1">
@@ -166,7 +196,7 @@ export default function DashboardPage() {
                     <div className="space-y-1.5 md:space-y-2 md:max-h-[360px] md:overflow-y-auto custom-scrollbar pr-1 md:pr-2 flex-1">
                       {paginatedFlowLogs.map((tx, i) => {
                         const isDeposit = tx.type === 'deposit' || tx.type === 'admin_transfer';
-                        const Icon = isDeposit ? Plus : ArrowUpRight;
+                        const Icon = isDeposit ? Plus : ArrowDown;
                         const iconBg = isDeposit ? 'bg-[#d3a936]' : 'bg-blue-600';
                         const iconColor = isDeposit ? 'text-black' : 'text-white';
                         const label = isDeposit ? 'Dépôt' : 'Retrait';
@@ -179,36 +209,64 @@ export default function DashboardPage() {
                           tx.status === 'completed' ? 'APPROUVÉ' :
                           tx.status === 'failed' ? 'REJETÉ' :
                           tx.status === 'pending' ? 'ATTENTE' :
-                          tx.status.toUpperCase();
+                          String(tx.status || '').toUpperCase();
 
                         return (
-                          <div key={tx._id || `${tx.createdAt}-${i}`} className="cassanova-row-slim min-h-[50px] md:min-h-0 group mb-1 last:mb-0">
-                            <div className="flex items-center space-x-4 flex-1 min-w-0">
-                              <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 ${iconBg} border border-white/5 ${iconColor}`}>
-                                <Icon size={12} />
-                              </div>
-                              <div className="flex flex-col min-w-0 py-1">
-                                <span className="text-sm font-black text-white uppercase tracking-tighter">{label}</span>
-                                <div className="flex items-center space-x-2">
-                                  <div className="w-px h-3 bg-white/10" />
-                                  <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">
-                                    {new Date(tx.createdAt).toLocaleDateString('fr-FR')} • {new Date(tx.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
+                          <div key={tx._id || `${tx.createdAt}-${i}`} className="cassanova-row-slim min-h-[60px] md:min-h-0 group mb-1 last:mb-0 py-2 md:py-1">
+                             <div className="flex items-center space-x-4 flex-1 min-w-0">
+                                <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 ${iconBg} border border-white/5 ${iconColor}`}>
+                                   <Icon size={12} />
                                 </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-3 shrink-0 ml-auto">
-                              <div className="text-base font-black tracking-tighter whitespace-nowrap text-white">
-                                {amountSign}{tx.amount.toFixed(1)} <span className="text-[8px] md:text-[10px] opacity-40 text-white uppercase">TND</span>
-                              </div>
-                              <div className={`w-8 h-6 md:w-auto px-2 py-0.5 rounded-full border text-[7px] font-black uppercase tracking-widest flex items-center justify-center space-x-1 ${statusColor}`}>
-                                <div className={`w-1 h-1 rounded-full animate-pulse ${
-                                  tx.status === 'completed' ? 'bg-green-500' :
-                                  tx.status === 'failed' ? 'bg-red-500' : 'bg-yellow-500'
-                                }`} />
-                                <span className="hidden md:inline">{displayStatus}</span>
-                              </div>
-                            </div>
+                                
+                                <div className="flex flex-1 min-w-0 items-center justify-between md:justify-start pr-2">
+                                   <div className="flex flex-col md:flex-row md:items-center min-w-0 flex-1 gap-1 md:gap-0">
+                                      <div className="md:w-[200px] flex items-center space-x-2 min-w-0 shrink-0">
+                                         <span className="text-sm md:text-base font-black uppercase tracking-tighter truncate text-gray-500 md:text-white">
+                                            {label}
+                                         </span>
+                                      </div>
+                                      
+                                      <div className="md:hidden text-base font-black tracking-tighter text-white">
+                                         {amountSign}{tx.amount.toFixed(1)} <span className="text-[10px] opacity-40 text-white uppercase">TND</span>
+                                      </div>
+                                      
+                                      <div className="hidden md:flex items-center flex-1">
+                                         <div className="md:w-[150px] flex items-center space-x-2 shrink-0">
+                                            <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">
+                                               {new Date(tx.createdAt).toLocaleDateString('fr-FR')}
+                                            </span>
+                                            <div className="w-1 h-1 rounded-full bg-white/10" />
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                               {new Date(tx.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                         </div>
+                                         <div className="flex-1 text-right text-base font-black tracking-tighter whitespace-nowrap pr-4 text-white">
+                                            {amountSign}{tx.amount.toFixed(1)} <span className="text-[10px] opacity-40 text-white uppercase">TND</span>
+                                         </div>
+                                      </div>
+                                   </div>
+                                   
+                                   <div className="md:hidden flex flex-col items-end space-y-0.5 shrink-0 mr-3">
+                                      <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest">
+                                         {new Date(tx.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+                                      </span>
+                                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                         {new Date(tx.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                      </span>
+                                   </div>
+
+                                   <div className={`w-8 h-6 md:w-auto px-2 py-0.5 rounded-full border text-[7px] font-black uppercase tracking-widest flex items-center justify-center space-x-1 shrink-0 ${statusColor}`}>
+                                      <div className={`w-1 h-1 rounded-full animate-pulse ${
+                                        tx.status === 'completed' ? 'bg-green-500' :
+                                        tx.status === 'failed' ? 'bg-red-500' : 'bg-yellow-500'
+                                      }`} />
+                                      {tx.status === 'pending' && <History size={8} className="md:hidden" />}
+                                      {tx.status === 'completed' && <Check size={8} className="md:hidden" />}
+                                      {tx.status === 'failed' && <XCircle size={8} className="md:hidden" />}
+                                      <span className="hidden md:inline">{displayStatus}</span>
+                                   </div>
+                                </div>
+                             </div>
                           </div>
                         );
                       })}
@@ -246,9 +304,34 @@ export default function DashboardPage() {
           {}
           <div className="bezel-shell p-1">
             <div className="bezel-core bg-black rounded-[2rem] overflow-hidden h-full flex flex-col">
-              <div className="p-5 md:p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+              <div className="px-6 py-4 border-b border-white/5 bg-white/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center space-x-4">
                   <h2 className="text-xl font-black text-white uppercase tracking-tighter">Histoire de Paris</h2>
+                </div>
+                <div className="flex items-center space-x-2 self-start sm:self-center">
+                  <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Période:</span>
+                  <div className="flex gap-1.5">
+                    {[
+                      { value: '7d', label: '7 Jours' },
+                      { value: '15d', label: '15 Jours' },
+                      { value: '30d', label: '30 Jours' }
+                    ].map((timeTab) => (
+                      <button
+                        key={timeTab.value}
+                        onClick={() => {
+                          setBetsTimeRange(timeTab.value);
+                          setHistoryPage(1);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all duration-200 ${
+                          betsTimeRange === timeTab.value
+                            ? 'bg-blue-600/15 border border-blue-600/40 text-blue-500'
+                            : 'bg-white/5 border border-white/5 text-gray-600 hover:text-white'
+                        }`}
+                      >
+                        {timeTab.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="p-4 md:p-6 flex flex-col flex-1">
@@ -269,7 +352,7 @@ export default function DashboardPage() {
                         const label = item.desc;
                         let amountSign = '';
                         let statusColor = 'bg-gray-500/10 border-gray-500/20 text-gray-500';
-                        let displayStatus = item.status.toUpperCase();
+                        let displayStatus = String(item.status || '').toUpperCase();
 
                         if (isWin) {
                           Icon = item.originalType === 'sports' ? ReceiptText : CheckCircle2;
@@ -311,33 +394,62 @@ export default function DashboardPage() {
                         }
 
                         return (
-                          <div key={item._id || `${item.createdAt}-${i}`} className="cassanova-row-slim min-h-[50px] md:min-h-0 group mb-1 last:mb-0">
-                            <div className="flex items-center space-x-4 flex-1 min-w-0">
-                              <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 ${iconBg} border border-white/5 ${iconColor}`}>
-                                <Icon size={12} />
-                              </div>
-                              <div className="flex flex-col min-w-0 py-1">
-                                <span className="text-sm font-black text-white uppercase tracking-tighter truncate">{label}</span>
-                                <div className="flex items-center space-x-2">
-                                  <div className="w-px h-3 bg-white/10" />
-                                  <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest shrink-0">
-                                    {new Date(item.createdAt).toLocaleDateString('fr-FR')} • {new Date(item.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
+                          <div key={item._id || `${item.createdAt}-${i}`} className="cassanova-row-slim min-h-[60px] md:min-h-0 group mb-1 last:mb-0 py-2 md:py-1">
+                             <div className="flex items-center space-x-4 flex-1 min-w-0">
+                                <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 ${iconBg} border border-white/5 ${iconColor}`}>
+                                   <Icon size={12} />
                                 </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-3 shrink-0 ml-auto">
-                              <div className="text-base font-black tracking-tighter whitespace-nowrap text-white">
-                                {amountSign}{Number(item.amount || 0).toFixed(1)} <span className="text-[8px] md:text-[10px] opacity-40 text-white uppercase">TND</span>
-                              </div>
-                              <div className={`w-8 h-6 md:w-auto px-2 py-0.5 rounded-full border text-[7px] font-black uppercase tracking-widest flex items-center justify-center space-x-1 ${statusColor}`}>
-                                <div className={`w-1 h-1 rounded-full ${isPending ? 'animate-pulse' : ''} ${
-                                  displayStatus === 'GAGNÉ' ? 'bg-green-500' :
-                                  displayStatus === 'ATTENTE' ? 'bg-yellow-500' : 'bg-red-500'
-                                }`} />
-                                <span className="hidden md:inline">{displayStatus}</span>
-                              </div>
-                            </div>
+                                
+                                <div className="flex flex-1 min-w-0 items-center justify-between md:justify-start pr-2">
+                                   <div className="flex flex-col md:flex-row md:items-center min-w-0 flex-1 gap-1 md:gap-0">
+                                      <div className="md:w-[200px] flex items-center space-x-2 min-w-0 shrink-0">
+                                         <span className="text-sm md:text-base font-black uppercase tracking-tighter truncate text-white">
+                                            {label}
+                                         </span>
+                                      </div>
+                                      
+                                      <div className="md:hidden text-base font-black tracking-tighter text-white">
+                                         {amountSign}{Number(item.amount || 0).toFixed(1)} <span className="text-[10px] opacity-40 text-white uppercase">TND</span>
+                                      </div>
+                                      
+                                      <div className="hidden md:flex items-center flex-1">
+                                         <div className="md:w-[150px] flex items-center space-x-2 shrink-0">
+                                            <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">
+                                               {new Date(item.createdAt).toLocaleDateString('fr-FR')}
+                                            </span>
+                                            <div className="w-1 h-1 rounded-full bg-white/10" />
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                               {new Date(item.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                         </div>
+                                         <div className="flex-1 text-right text-base font-black tracking-tighter whitespace-nowrap pr-4 text-white">
+                                            {amountSign}{Number(item.amount || 0).toFixed(1)} <span className="text-[10px] opacity-40 text-white uppercase">TND</span>
+                                         </div>
+                                      </div>
+                                   </div>
+                                   
+                                   <div className="md:hidden flex flex-col items-end space-y-0.5 shrink-0 mr-3">
+                                      <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest">
+                                         {new Date(item.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+                                      </span>
+                                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                         {new Date(item.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                      </span>
+                                   </div>
+
+                                   <div className={`w-8 h-6 md:w-auto px-2 py-0.5 rounded-full border text-[7px] font-black uppercase tracking-widest flex items-center justify-center space-x-1 shrink-0 ${statusColor}`}>
+                                      <div className={`w-1 h-1 rounded-full animate-pulse ${
+                                        isWin ? 'bg-green-500' :
+                                        (item.type.includes('loss') || (!isPending && item.type === 'sports_bet')) ? 'bg-red-500' :
+                                        'bg-yellow-500'
+                                      }`} />
+                                      {isPending && <History size={8} className="md:hidden" />}
+                                      {isWin && <Check size={8} className="md:hidden" />}
+                                      {(item.type.includes('loss') || (!isPending && item.type === 'sports_bet')) && <XCircle size={8} className="md:hidden" />}
+                                      <span className="hidden md:inline">{displayStatus}</span>
+                                   </div>
+                                </div>
+                             </div>
                           </div>
                         );
                       })}

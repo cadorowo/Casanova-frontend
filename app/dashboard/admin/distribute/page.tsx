@@ -52,7 +52,7 @@ export default function AdminDistributePage() {
   return (
     <div className="min-h-full bg-[#000000] pt-2 md:pt-4 px-4 md:px-12">
       <div className="max-w-2xl mx-auto">
-        <Link href="/dashboard" className="inline-flex items-center space-x-2 text-gray-500 hover:text-white mb-3 group transition-colors">
+        <Link href="/dashboard" className="relative z-50 inline-flex items-center space-x-2 text-gray-500 hover:text-white mb-3 group transition-colors">
           <ArrowLeft size={14} className="transform group-hover:-translate-x-1 transition-transform" />
           <span className="text-[10px] font-black uppercase tracking-widest">Retour au Centre de Commande</span>
         </Link>
