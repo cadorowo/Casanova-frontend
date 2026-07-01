@@ -502,9 +502,7 @@ export default function MatchDetailsPage() {
   const { data: rawMatch, isLoading, mutate } = useSWR(id ? `match-${id}` : null, () => api.games.getMatchById(id as string), { revalidateOnFocus: false, revalidateOnMount: true });
 
   useEffect(() => {
-    if (!socket || !socket.emit) return;
-
-    socket.emit('subscribe_fixture', { fixture_id: Number(id) });
+    let socketInstance: any = null;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleOddsUpdate = (updatedMatch: any) => {
@@ -514,13 +512,20 @@ export default function MatchDetailsPage() {
       }
     };
 
-    socket.on('odds_update', handleOddsUpdate);
+    import('@/lib/socket').then(({ socket }) => {
+      if (!socket || !socket.emit) return;
+      socketInstance = socket;
+      socket.emit('subscribe_fixture', { fixture_id: Number(id) });
+      socket.on('odds_update', handleOddsUpdate);
+    });
 
     return () => {
-      socket.emit('unsubscribe_fixture', { fixture_id: Number(id) });
-      socket.off('odds_update', handleOddsUpdate);
+      if (socketInstance) {
+        socketInstance.emit('unsubscribe_fixture', { fixture_id: Number(id) });
+        socketInstance.off('odds_update', handleOddsUpdate);
+      }
     };
-  }, [id, socket, mutate]);
+  }, [id, mutate]);
 
   const match = useMemo(() => {
     if (!rawMatch) return null;

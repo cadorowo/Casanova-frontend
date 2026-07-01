@@ -1,7 +1,6 @@
 import useSWR from 'swr';
 import { api } from './api';
 import { useEffect } from 'react';
-import { socket } from './socket';
 
 export const normalizeValue = (val: string): string => {
   const v = String(val || '').trim();
@@ -250,9 +249,7 @@ export default function useMatches(sport?: string | null) {
   );
 
   useEffect(() => {
-    if (!socket || !socket.emit) return;
-
-    socket.emit('subscribe_fixtures_list');
+    let socketInstance: any = null;
 
     const handleOddsUpdate = (updatedMatch: SportMatch) => {
       console.log(`[WebSocket] Odds update received for fixture ${updatedMatch.fixture_id}`);
@@ -274,13 +271,20 @@ export default function useMatches(sport?: string | null) {
       }, false);
     };
 
-    socket.on('odds_update', handleOddsUpdate);
+    import('@/lib/socket').then(({ socket }) => {
+      if (!socket || !socket.emit) return;
+      socketInstance = socket;
+      socket.emit('subscribe_fixtures_list');
+      socket.on('odds_update', handleOddsUpdate);
+    });
 
     return () => {
-      socket.emit('unsubscribe_fixtures_list');
-      socket.off('odds_update', handleOddsUpdate);
+      if (socketInstance) {
+        socketInstance.emit('unsubscribe_fixtures_list');
+        socketInstance.off('odds_update', handleOddsUpdate);
+      }
     };
-  }, [socket, mutate]);
+  }, [mutate]);
 
   const matches = data ? data.map(mapUltraToUI).filter((m): m is NonNullable<ReturnType<typeof mapUltraToUI>> => m !== null) : [];
 

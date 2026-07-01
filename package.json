@@ -37,6 +37,7 @@
     "@types/react-dom": "^19",
     "@types/webfontloader": "^1.6.38",
     "eslint": "^9",
+    "eslint-config-next": "^16.2.9",
     "tailwindcss": "^4.3.2",
     "typescript": "^5"
   },

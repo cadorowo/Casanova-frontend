@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './auth-context';
-import { socket } from './socket';
 
 export interface Selection {
   id: string;
@@ -122,9 +121,17 @@ export function BetProvider({ children }: { children: React.ReactNode }) {
       }));
     };
 
-    socket.on('odds_update', handleOddsUpdate);
+    let socketInstance: any = null;
+    
+    import('@/lib/socket').then(({ socket }) => {
+      socketInstance = socket;
+      socket.on('odds_update', handleOddsUpdate);
+    });
+
     return () => {
-      socket.off('odds_update', handleOddsUpdate);
+      if (socketInstance) {
+        socketInstance.off('odds_update', handleOddsUpdate);
+      }
     };
   }, []);
 

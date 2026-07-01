@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { socket } from './socket';
 
 export function useSocketSync(onRefresh?: () => void, onBalanceUpdate?: (data: { userId: string; balance: number; isSubAdmin?: boolean }) => void) {
   const refreshRef = useRef(onRefresh);
@@ -19,12 +18,19 @@ export function useSocketSync(onRefresh?: () => void, onBalanceUpdate?: (data: {
       if (balanceUpdateRef.current) balanceUpdateRef.current(data);
     };
 
-    socket.on('admin_data_refresh', handleAdminRefresh);
-    socket.on('balance_update', handleBalanceUpdate);
+    let socketInstance: any = null;
+
+    import('@/lib/socket').then(({ socket }) => {
+      socketInstance = socket;
+      socket.on('admin_data_refresh', handleAdminRefresh);
+      socket.on('balance_update', handleBalanceUpdate);
+    });
 
     return () => {
-      socket.off('admin_data_refresh', handleAdminRefresh);
-      socket.off('balance_update', handleBalanceUpdate);
+      if (socketInstance) {
+        socketInstance.off('admin_data_refresh', handleAdminRefresh);
+        socketInstance.off('balance_update', handleBalanceUpdate);
+      }
     };
   }, []); 
 }
