@@ -44,9 +44,9 @@ export default function LoginModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start md:items-center justify-center p-4 md:p-6 overflow-y-auto no-scrollbar pb-32 md:pb-0">
+    <div className="fixed inset-0 z-[200] flex items-start md:items-center justify-center p-4 md:p-6 overflow-y-auto no-scrollbar pb-32 md:pb-0">
       <div 
-        className="absolute inset-0 bg-[#000000]/80 backdrop-blur-3xl animate-reveal"
+        className="fixed inset-0 bg-[#000000]/80 backdrop-blur-3xl animate-reveal"
         onClick={closeAuth}
       />
       
@@ -55,7 +55,7 @@ export default function LoginModal() {
           
           <button 
             onClick={closeAuth}
-            className="absolute top-8 right-8 w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center border border-white/5 transition-all active:scale-90"
+            className="absolute top-6 right-6 w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center border border-white/5 transition-all active:scale-90 z-50"
           >
             <X size={18} className="text-gray-500" />
           </button>
