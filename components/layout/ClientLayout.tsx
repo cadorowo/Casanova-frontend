@@ -3,7 +3,6 @@
 import { useState, Suspense, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { mutate } from 'swr';
-import { socket } from '@/lib/socket';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Sidebar from "@/components/layout/Sidebar";
@@ -38,21 +37,28 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   }, [pathname]);
 
   useEffect(() => {
-    const handleForceRefresh = () => {
-      const jitter = Math.random() * 15000;
-      setTimeout(() => mutate(() => true), jitter);
-    };
-    const handleReconnect = () => {
-      mutate(() => true);
-    };
+    // Lazy-load socket after mount so it doesn't block the initial render.
+    // The socket.io-client is a heavy library and initializing it eagerly
+    // was causing the 20-second black screen on iPhone.
+    let cleanup: (() => void) | undefined;
+    import('@/lib/socket').then(({ socket }) => {
+      const handleForceRefresh = () => {
+        const jitter = Math.random() * 15000;
+        setTimeout(() => mutate(() => true), jitter);
+      };
+      const handleReconnect = () => {
+        mutate(() => true);
+      };
 
-    socket.on('force_refresh', handleForceRefresh);
-    socket.on('connect', handleReconnect);
+      socket.on('force_refresh', handleForceRefresh);
+      socket.on('connect', handleReconnect);
 
-    return () => {
-      socket.off('force_refresh', handleForceRefresh);
-      socket.off('connect', handleReconnect);
-    };
+      cleanup = () => {
+        socket.off('force_refresh', handleForceRefresh);
+        socket.off('connect', handleReconnect);
+      };
+    });
+    return () => cleanup?.();
   }, []);
 
   return (

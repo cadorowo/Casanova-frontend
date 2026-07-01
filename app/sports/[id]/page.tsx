@@ -19,7 +19,6 @@ import { useState, useMemo, useEffect } from 'react';
 import { useBet } from '@/lib/bet-context';
 import { mapUltraToUI, normalizeValue, translateOptionValue } from '@/lib/use-matches';
 import { api } from '@/lib/api';
-import { socket } from '@/lib/socket';
 
 interface MarketOption {
   label: string;
