@@ -376,7 +376,7 @@ export default function DashboardPage() {
                           Icon = Gamepad2;
                           iconBg = 'bg-gray-500/10';
                           iconColor = 'text-gray-400';
-                          amountSign = item.netResult > 0 ? '+' : item.netResult < 0 ? '-' : '';
+                          amountSign = (item.netResult || 0) > 0 ? '+' : (item.netResult || 0) < 0 ? '-' : '';
                           statusColor = 'bg-gray-500/10 border-gray-500/20 text-gray-500';
                           displayStatus = 'TERMINÉ';
                         } else if (isWin) {

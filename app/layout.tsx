@@ -23,6 +23,11 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     siteName: "Casanova",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Casanova | Paris Sportifs d'Élite & Casino Premium",
+    description: "La destination ultime pour les paris sportifs et les jeux de casino premium. Rejoignez l'Arène Casanova pour une expérience d'élite.",
+  },
 };
 
 export const viewport: Viewport = {
