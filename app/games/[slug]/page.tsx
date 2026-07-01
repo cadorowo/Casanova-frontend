@@ -36,7 +36,6 @@ export default function GameDetailPage() {
   const [playError, setPlayError] = useState('');
   const [iframeLogs, setIframeLogs] = useState<{ level: string; message: string; timestamp: Date }[]>([]);
   const [showLogs] = useState(false);
-  const [iframeLoaded, setIframeLoaded] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
 
@@ -64,13 +63,6 @@ export default function GameDetailPage() {
       document.body.style.overflow = '';
     };
   }, [isPlaying]);
-
-  // Warm up the slot game service as soon as the user lands on this page
-  // so the cold-start has already happened by the time they click Play
-  useEffect(() => {
-    const SLOT_URL = process.env.NEXT_PUBLIC_SLOT_GAME_URL || 'https://casanova-slot-game.onrender.com';
-    fetch(`${SLOT_URL}/health`, { method: 'GET', mode: 'no-cors' }).catch(() => {});
-  }, []);
 
   useEffect(() => {
     const fetchGameData = async () => {
@@ -124,7 +116,6 @@ export default function GameDetailPage() {
       if (game.provider === 'pragmatic' || game.provider === 'local' || game.launchType === 'internal-slot' || game.provider === 'slot-pragmatic') {
         const sessionData = await api.slots.createSession(token || '', game.slug);
         if (sessionData && sessionData.redirectUrl) {
-          setIframeLoaded(false);
           setLaunchUrl(sessionData.redirectUrl);
           setIsPlaying(true);
         } else {
@@ -362,17 +353,10 @@ export default function GameDetailPage() {
                   </div>
                   {}
                   <div className="w-full flex-grow relative overflow-hidden">
-                    {!iframeLoaded && (
-                      <div className="absolute inset-0 bg-black z-10 flex flex-col items-center justify-center gap-4">
-                        <div className="w-12 h-12 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
-                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Chargement du jeu...</p>
-                      </div>
-                    )}
                     <iframe 
                       ref={iframeRef}
                       src={launchUrl} 
                       className="absolute inset-0 w-full h-full border-0"
-                      onLoad={() => setIframeLoaded(true)}
                       onError={() => setPlayError('Le client du jeu a échoué à se charger. Vérifiez la connexion.')}
                     />
 
