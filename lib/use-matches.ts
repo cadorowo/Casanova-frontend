@@ -38,6 +38,9 @@ export const translateMarketName = (name: string): string => {
   if (nLower.includes('exact score') || nLower.includes('correct score') || nLower.includes('final score')) {
     return 'Score Exact';
   }
+  if (nLower.includes('asian handicap (1st half)') || nLower.includes('asian handicap first half')) {
+    return 'Handicap Asiatique - 1ère Mi-temps';
+  }
   if (nLower.includes('asian handicap')) {
     return 'Handicap Asiatique';
   }
@@ -56,11 +59,29 @@ export const translateMarketName = (name: string): string => {
   if (nLower.includes('total corners') || nLower.includes('match corners') || nLower.includes('corners over under') || nLower.includes('corners over/under') || nLower.includes('corners')) {
     return 'Total Corners';
   }
+  if (nLower.includes('goals odd/even') || nLower.includes('odd/even goals') || nLower.includes('goals odd even')) {
+    return 'Buts Pair/Impair';
+  }
+  if (nLower.includes('over/under (1st half)') || nLower.includes('over/under - 1st half') || nLower.includes('over/under first half')) {
+    return 'Total de Buts - 1ère Mi-temps';
+  }
   if (nLower.includes('first half goals') || nLower.includes('1st half goals') || nLower.includes('goals over/under - first half') || nLower.includes('goals over/under first half')) {
     return 'Buts en 1ère Mi-temps';
   }
   if (nLower.includes('goals over/under') || nLower.includes('match goals') || nLower.includes('total goals') || nLower.includes('over/under')) {
     return 'Total de Buts';
+  }
+  if (nLower.includes('to win 2nd half') || nLower.includes('winner 2nd half') || nLower.includes('2nd half winner')) {
+    return 'Résultat 2ème Mi-temps';
+  }
+  if (nLower.includes('home team score a goal (2nd half)') || nLower.includes('home team score a goal 2nd half')) {
+    return 'Équipe Domicile Marque (2ème Mi-temps)';
+  }
+  if (nLower.includes('away team score a goal (2nd half)') || nLower.includes('away team score a goal 2nd half')) {
+    return 'Équipe Extérieur Marque (2ème Mi-temps)';
+  }
+  if (nLower === '1x2 (1st half)' || nLower.includes('1x2 (1st half)')) {
+    return 'Résultat Mi-temps (1X2)';
   }
   if (nLower.includes('half time result') || nLower.includes('halftime result') || nLower.includes('1st half result') || nLower.includes('first half winner') || nLower.includes('1st half winner')) {
     return 'Résultat Mi-temps';
@@ -109,6 +130,18 @@ export const translateOptionValue = (val: string): string => {
   if (vLower === 'yes' || vLower === 'oui') return 'Oui';
   if (vLower === 'no' || vLower === 'non') return 'Non';
   if (vLower === 'no goal' || vLower === 'no goals' || vLower === 'none') return 'Aucun But';
+
+  // Odd/Even (Goals Odd/Even market)
+  if (vLower === 'odd') return 'Impair';
+  if (vLower === 'even') return 'Pair';
+
+  // Double Chance combos
+  if (vLower === 'home or draw' || vLower === 'home/draw' || vLower === '1x') return '1X';
+  if (vLower === 'draw or away' || vLower === 'draw/away' || vLower === 'x2' || vLower === 'away or draw') return 'X2';
+  if (vLower === 'home or away' || vLower === 'home/away' || vLower === '12') return '1 ou 2';
+
+  // HT/FT combos (e.g. "1/2", "X/1")
+  if (/^[1x2]\/[1x2]$/i.test(vLower)) return v.toUpperCase();
 
   let translated = v;
   if (vLower.includes('exactly')) {
