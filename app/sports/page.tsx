@@ -62,19 +62,7 @@ export default function SportsPage() {
 
   const [showOnlyLive, setShowOnlyLive] = useState(false);
   const [selectedNation, setSelectedNation] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
   const [alertError, setAlertError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (alertError) {
-      const timer = setTimeout(() => setAlertError(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [alertError]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     const authAction = searchParams.get('auth');
@@ -117,7 +105,14 @@ export default function SportsPage() {
 
   const sortedGroupKeys = Object.keys(groupedMatches).sort();
 
-  if (isLoading || !mounted) return <SportsSkeleton />;
+  useEffect(() => {
+    if (alertError) {
+      const timer = setTimeout(() => setAlertError(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertError]);
+
+  if (isLoading) return <SportsSkeleton />;
 
   return (
     <div className="min-h-screen bg-[#000000] text-white">

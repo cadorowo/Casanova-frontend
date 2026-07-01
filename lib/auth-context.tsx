@@ -32,11 +32,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      setToken('authenticated');
+      try {
+        setUser(JSON.parse(storedUser));
+        setToken('authenticated');
+      } catch {
+        localStorage.removeItem('user');
+      }
     }
 
-    api.user.getMe()
+    // Race getMe against a 6-second timeout so a cold-starting
+    // backend doesn't freeze the whole UI on mobile.
+    const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 6000));
+    Promise.race([api.user.getMe(), timeout])
       .then(profile => {
         if (profile) {
           setUser(profile as User);
