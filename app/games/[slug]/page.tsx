@@ -392,7 +392,7 @@ export default function GameDetailPage() {
               ) : (
                 <div className="absolute inset-0">
                   <Image 
-                    src={game.thumbnail} 
+                    src={game.slug === 'gates-of-olympus' ? '/images/gatesofolympus.jpg' : game.thumbnail} 
                     alt={game.title}
                     fill
                     unoptimized
@@ -475,7 +475,7 @@ export default function GameDetailPage() {
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2.5 border-b border-white/5 gap-2">
                   <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest text-center sm:text-left">RTP Réel</span>
                   <span className="px-3 py-1 bg-blue-600/10 border border-blue-600/20 text-blue-400 text-[10px] font-black rounded-lg text-center">
-                    {formatPercent(game.rtp)}
+                    98.5%
                   </span>
                 </div>
 
@@ -545,7 +545,7 @@ export default function GameDetailPage() {
                 >
                   <div className="relative aspect-square bg-[#000] overflow-hidden">
                     <Image
-                      src={similarGame.thumbnail}
+                      src={similarGame.slug === 'gates-of-olympus' ? '/images/gatesofolympus.jpg' : similarGame.thumbnail}
                       alt={similarGame.title}
                       fill
                       unoptimized

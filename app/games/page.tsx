@@ -310,7 +310,7 @@ export default function CasinoLobbyPage() {
                    <div className="relative aspect-[3/4] bg-[#000000] rounded-[calc(1rem-0.125rem)] overflow-hidden">
                       <Link href={`/games/${game.slug}`} className="absolute inset-0 z-10 block">
                          <Image 
-                            src={game.thumbnail} 
+                            src={game.slug === 'gates-of-olympus' ? '/images/gatesofolympus.jpg' : game.thumbnail} 
                             alt={game.title}
                             fill
                             unoptimized
