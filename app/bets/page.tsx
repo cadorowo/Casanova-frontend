@@ -253,7 +253,6 @@ export default function BetsPage() {
                       </div>
                       {}
                       <div className={`shrink-0 flex items-center space-x-2 px-3 py-1.5 rounded-full border text-[8px] font-black uppercase tracking-widest ${cfg.bg} ${cfg.color}`}>
-                        {bet.status.toLowerCase() !== 'won' && <ReceiptText size={10} className="shrink-0 text-blue-500" />}
                         <span className="whitespace-nowrap">{cfg.label}</span>
                       </div>
                     </div>
