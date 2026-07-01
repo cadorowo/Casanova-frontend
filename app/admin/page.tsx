@@ -118,20 +118,20 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
+    let t: NodeJS.Timeout;
     if (mounted) {
       if (!isAuthenticated) {
         router.push('/');
       } else if (user?.role !== 'admin') {
         router.push('/dashboard');
       } else {
-        fetchAdminData();
+        t = setTimeout(() => fetchAdminData(), 0);
       }
     }
+    return () => { if (t) clearTimeout(t); };
   }, [isAuthenticated, user, router, mounted, fetchAdminData]);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 0); return () => clearTimeout(t); }, []);
 
   const formatBalance = (amount: number) => {
     return new Intl.NumberFormat('fr-TN', {

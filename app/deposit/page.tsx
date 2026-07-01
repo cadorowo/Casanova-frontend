@@ -23,9 +23,7 @@ export default function DepositPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, [isAuthenticated, router]);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 0); return () => clearTimeout(t); }, [isAuthenticated, router]);
 
   const handleDeposit = async (e: React.FormEvent) => {
     e.preventDefault();

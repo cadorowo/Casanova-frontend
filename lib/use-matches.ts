@@ -249,6 +249,7 @@ export default function useMatches(sport?: string | null) {
   );
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let socketInstance: any = null;
 
     const handleOddsUpdate = (updatedMatch: SportMatch) => {

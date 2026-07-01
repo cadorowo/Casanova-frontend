@@ -95,6 +95,7 @@ export class DailyBonus extends React.Component {
 
                             {[1, 2, 3, 4, 5, 6, 7].map((i) => (
                                 <img
+                                    key={i}
                                     src={
                                         this.state.streakDays >= i
                                             ? "images/frenzy/dailybonus/daily_bonus_filled_slot.png"

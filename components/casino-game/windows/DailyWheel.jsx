@@ -147,8 +147,9 @@ export class DailyWheelWin extends React.Component {
                                 src="images/frenzy/wheel/wheel.png"
                                 alt="wheel"
                             />
-                            {list.map((item) => (
+                            {list.map((item, index) => (
                                 <div
+                                    key={index}
                                     className="modal-window-dailyw__wheel_price"
                                     style={{
                                         transform: `translateY(-50%) rotate(${item?.textDeg}deg)`,

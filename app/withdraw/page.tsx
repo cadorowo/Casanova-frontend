@@ -27,7 +27,8 @@ export default function WithdrawPage() {
     if (!isAuthenticated && mounted) {
       router.push('/');
     }
-    setMounted(true);
+    const t = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(t);
   }, [isAuthenticated, router, mounted]);
 
   const handleWithdraw = async (e: React.FormEvent) => {

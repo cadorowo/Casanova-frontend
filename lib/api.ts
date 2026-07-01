@@ -63,8 +63,8 @@ async function request(endpoint: string, options: RequestOptions = {}) {
   let response;
   try {
     response = await fetch(url, { ...options, headers, credentials: 'include', signal: controller.signal });
-  } catch (error: any) {
-    if (error.name === 'AbortError') {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'AbortError') {
       throw new Error('La requête a expiré (10s). Veuillez vérifier votre connexion.');
     }
     throw error;

@@ -16,9 +16,7 @@ export default function AdminBuyInPage() {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 0); return () => clearTimeout(t); }, []);
 
   const handlePackageSelect = async (amountToBuy: number, id: string | number) => {
     setProcessingId(id);

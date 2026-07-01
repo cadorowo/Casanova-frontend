@@ -40,13 +40,19 @@ export default function CasinoLobbyPage() {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   
   useEffect(() => {
-    setActiveCategory(categoryParam || 'popular');
-    setCurrentPage(1);
+    const t = setTimeout(() => {
+      setActiveCategory(categoryParam || 'popular');
+      setCurrentPage(1);
+    }, 0);
+    return () => clearTimeout(t);
   }, [categoryParam]);
 
   useEffect(() => {
-    setSearchTerm(searchParam || '');
-    setCurrentPage(1);
+    const t = setTimeout(() => {
+      setSearchTerm(searchParam || '');
+      setCurrentPage(1);
+    }, 0);
+    return () => clearTimeout(t);
   }, [searchParam]);
 
   useEffect(() => {
@@ -57,7 +63,7 @@ export default function CasinoLobbyPage() {
         })
         .catch(err => console.log('Failed to load favorites', err));
     } else {
-      setFavoriteIds([]);
+      setTimeout(() => setFavoriteIds([]), 0);
     }
   }, [isAuthenticated, token]);
 

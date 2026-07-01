@@ -121,6 +121,7 @@ export function BetProvider({ children }: { children: React.ReactNode }) {
       }));
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let socketInstance: any = null;
     
     import('@/lib/socket').then(({ socket }) => {
@@ -135,15 +136,23 @@ export function BetProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const clearSlip = () => {
+    setSelections([]);
+    setIsSlipOpen(false);
+  };
+
+  const openSlip = () => setIsSlipOpen(true);
+  const closeSlip = () => setIsSlipOpen(false);
+
   useEffect(() => {
     if (!isAuthenticated) {
-      clearSlip();
+      setTimeout(() => clearSlip(), 0);
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
     if (selections.length === 0) {
-      setIsSlipOpen(false);
+      setTimeout(() => setIsSlipOpen(false), 0);
     }
   }, [selections.length]);
 
@@ -176,13 +185,7 @@ export function BetProvider({ children }: { children: React.ReactNode }) {
     setSelections(prev => prev.filter(s => s.id !== id));
   };
 
-  const clearSlip = () => {
-    setSelections([]);
-    setIsSlipOpen(false);
-  };
 
-  const openSlip = () => setIsSlipOpen(true);
-  const closeSlip = () => setIsSlipOpen(false);
 
   const isInSlip = (matchId: string, marketName: string, selectionLabel: string, handicap?: string) => 
     selections.some(s =>

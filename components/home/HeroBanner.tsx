@@ -10,9 +10,7 @@ export default function HeroBanner() {
   const { isAuthenticated, openRegister } = useAuth();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 0); return () => clearTimeout(t); }, []);
 
   return (
     <section className="relative min-h-[70dvh] md:min-h-[90dvh] flex items-center pt-12 md:pt-24 pb-24 overflow-hidden">

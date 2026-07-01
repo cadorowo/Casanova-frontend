@@ -87,14 +87,14 @@ export default function BetsPage() {
         setTotal(data.total);
         setCurrentPage(page);
       } else {
-        setBets([]);
+        setTimeout(() => setBets([]), 0);
         setTotal(0);
         setHasMore(false);
       }
     } catch (err) {
       console.error('Failed to fetch bets', err);
       setError('Erreur de chargement des paris');
-      if (page === 1) setBets([]);
+      if (page === 1) setTimeout(() => setBets([]), 0);
     } finally {
       setLoading(false);
     }
@@ -106,16 +106,17 @@ export default function BetsPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setBets([]);
+      setTimeout(() => setBets([]), 0);
       return;
     }
-    setCurrentPage(1);
-    fetchBets(1, filter, timeRange);
+    const t = setTimeout(() => {
+      setCurrentPage(1);
+      fetchBets(1, filter, timeRange);
+    }, 0);
+    return () => { if (t) clearTimeout(t); };
   }, [filter, timeRange, isAuthenticated, fetchBets]);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 0); return () => clearTimeout(t); }, []);
 
   const filtered = filter === 'all' ? bets : bets.filter(b => b.status.toLowerCase() === filter);
 

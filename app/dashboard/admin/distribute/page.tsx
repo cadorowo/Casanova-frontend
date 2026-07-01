@@ -17,9 +17,7 @@ export default function AdminDistributePage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 0); return () => clearTimeout(t); }, []);
 
   const handleDistribute = async (e: React.FormEvent) => {
     e.preventDefault();

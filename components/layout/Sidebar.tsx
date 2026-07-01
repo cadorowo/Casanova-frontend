@@ -33,9 +33,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean, setIsO
   const [isCasinoExpanded, setIsCasinoExpanded] = useState(pathname.startsWith('/games'));
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 0); return () => clearTimeout(t); }, []);
   
   const { data: sportsList } = useSWR('sports-list', () => api.games.getSports(), {
     revalidateOnFocus: false,

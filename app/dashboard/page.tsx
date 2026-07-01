@@ -46,7 +46,7 @@ export default function DashboardPage() {
   }, [token, flowTimeRange, betsTimeRange]);
 
   useSocketSync(useCallback(() => {
-    fetchDashboardData();
+    const t = setTimeout(() => fetchDashboardData(), 0); return () => clearTimeout(t);
   }, [fetchDashboardData]));
 
   useEffect(() => {
@@ -56,13 +56,11 @@ export default function DashboardPage() {
     }
 
     if (isAuthenticated && token) {
-      fetchDashboardData();
+      const t = setTimeout(() => fetchDashboardData(), 0); return () => clearTimeout(t);
     }
   }, [isAuthenticated, token, fetchDashboardData, mounted, user, router]);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 0); return () => clearTimeout(t); }, []);
 
   const formatBalance = (amount: number) => {
     return new Intl.NumberFormat('fr-TN', {

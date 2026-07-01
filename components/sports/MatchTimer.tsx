@@ -22,7 +22,7 @@ export default function MatchTimer({
   const [displayMinutes, setDisplayMinutes] = useState(elapsed);
 
   useEffect(() => {
-    setDisplayMinutes(elapsed);
+    const t = setTimeout(() => setDisplayMinutes(elapsed), 0); return () => clearTimeout(t);
   }, [elapsed]);
 
   useEffect(() => {

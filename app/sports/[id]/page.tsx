@@ -502,6 +502,7 @@ export default function MatchDetailsPage() {
   const { data: rawMatch, isLoading, mutate } = useSWR(id ? `match-${id}` : null, () => api.games.getMatchById(id as string), { revalidateOnFocus: false, revalidateOnMount: true });
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let socketInstance: any = null;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -545,21 +546,24 @@ export default function MatchDetailsPage() {
     }
 
     if (transformed.markets) {
-      transformed.markets = [...transformed.markets]
-        .filter(market => !shouldHideMarket(market.name))
-        .sort((a, b) => {
-          const weightA = getMarketWeight(a.name);
-          const weightB = getMarketWeight(b.name);
-          if (weightA !== weightB) return weightA - weightB;
-          return a.name.localeCompare(b.name);
-        })
-        .map(market => ({
-          ...market,
-          values: sortMarketOptions(market.name, (market.values || []).map((v: OptionItem) => ({
-            ...v,
-            value: normalizeValue(v.value)
-          })) as OptionItem[])
-        }));
+      transformed = {
+        ...transformed,
+        markets: [...transformed.markets]
+          .filter(market => !shouldHideMarket(market.name))
+          .sort((a, b) => {
+            const weightA = getMarketWeight(a.name);
+            const weightB = getMarketWeight(b.name);
+            if (weightA !== weightB) return weightA - weightB;
+            return a.name.localeCompare(b.name);
+          })
+          .map(market => ({
+            ...market,
+            values: sortMarketOptions(market.name, (market.values || []).map((v: OptionItem) => ({
+              ...v,
+              value: normalizeValue(v.value)
+            })) as OptionItem[])
+          }))
+      };
     }
 
     return transformed;
@@ -588,7 +592,7 @@ export default function MatchDetailsPage() {
     }
 
     return markets.filter((m: { name: string }) => isMarketInCategory(m.name, activeCategory));
-  }, [match?.markets, activeCategory, searchQuery]);
+  }, [match, activeCategory, searchQuery]);
 
   if (isLoading) return (
     <div className="min-h-screen bg-[#000000] p-6 space-y-6">

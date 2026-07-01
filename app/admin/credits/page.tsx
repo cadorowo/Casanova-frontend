@@ -39,7 +39,7 @@ function AdminCreditsContent() {
   const [transferAmount, setTransferAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [playerLogs, setPlayerLogs] = useState<FinancialLog[]>([]);
-  const [playerBets, setPlayerBets] = useState<Record<string, any>>({});
+  const [playerBets, setPlayerBets] = useState<Record<string, { _id?: string; status?: string; payout?: number }>>({});
   const [isLoadingPlayerLogs, setIsLoadingPlayerLogs] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [flowPage, setFlowPage] = useState(1);
@@ -65,9 +65,11 @@ function AdminCreditsContent() {
       setPlayerLogs(data);
       const betsArr = betsRes?.success && betsRes?.data ? betsRes.data : betsRes;
       if (Array.isArray(betsArr)) {
-        const betsMap: Record<string, any> = {};
-        betsArr.forEach((b: any) => {
-          betsMap[String(b._id)] = b;
+        const betsMap: Record<string, { _id?: string; status?: string; payout?: number }> = {};
+        betsArr.forEach((b: { _id?: string; status?: string; payout?: number }) => {
+          if (b._id) {
+            betsMap[String(b._id)] = b;
+          }
         });
         setPlayerBets(betsMap);
       }
@@ -89,12 +91,16 @@ function AdminCreditsContent() {
   }, [token, searchPhone]);
 
   useEffect(() => {
+    let t: NodeJS.Timeout;
     if (phoneParam) {
-      setSearchPhone(phoneParam);
-      fetchPlayerLogs(phoneParam);
-      setFlowPage(1);
-      setGamePage(1);
+      t = setTimeout(() => {
+        setSearchPhone(phoneParam);
+        fetchPlayerLogs(phoneParam);
+        setFlowPage(1);
+        setGamePage(1);
+      }, 0);
     }
+    return () => { if (t) clearTimeout(t); };
   }, [phoneParam, fetchPlayerLogs]);
 
   useEffect(() => {
@@ -102,7 +108,8 @@ function AdminCreditsContent() {
       router.push('/');
       return;
     }
-    fetchUsers();
+    const t = setTimeout(() => fetchUsers(), 0);
+    return () => { if (t) clearTimeout(t); };
   }, [isAuthenticated, user, router, fetchUsers]);
 
   const handleTransfer = async (e: React.MouseEvent | React.FormEvent, isWithdraw: boolean = false) => {
@@ -629,8 +636,8 @@ function AdminCreditsContent() {
                         const iconColor = isCasino ? 'text-black' : 'text-gray-400';
                         const amountColor = 'text-white';
                         const label = isCasino ? 'PARI CASINO' : 'PARI SPORTIF';
-                        const stake = (log as any).stake ?? ((log.type === 'bet' || log.type === 'casino_bet') ? log.amount : 0);
-                        const gain = (log as any).payout ?? ((log as any).win ?? ((log.type === 'win' || log.type === 'casino_win') ? log.amount : 0));
+                        const stake = Number((log as Record<string, unknown>).stake ?? ((log.type === 'bet' || log.type === 'casino_bet') ? log.amount : 0));
+                        const gain = Number((log as Record<string, unknown>).payout ?? ((log as Record<string, unknown>).win ?? ((log.type === 'win' || log.type === 'casino_win') ? log.amount : 0)));
                         const hasStake = stake > 0;
                         const valueLabel = 'GAIN';
                         const displayStatus =

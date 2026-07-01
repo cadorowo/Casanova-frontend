@@ -18,6 +18,7 @@ export function useSocketSync(onRefresh?: () => void, onBalanceUpdate?: (data: {
       if (balanceUpdateRef.current) balanceUpdateRef.current(data);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let socketInstance: any = null;
 
     import('@/lib/socket').then(({ socket }) => {

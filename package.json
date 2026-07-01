@@ -27,7 +27,6 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/jquery": "^4.0.0",
     "@types/js-cookie": "^3.0.6",
