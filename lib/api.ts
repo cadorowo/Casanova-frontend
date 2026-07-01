@@ -8,12 +8,27 @@ let refreshPromise: Promise<boolean> | null = null;
 async function tryRefresh(): Promise<boolean> {
   if (isRefreshing && refreshPromise) return refreshPromise;
   isRefreshing = true;
+  
+  const currentRefreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
+  
   refreshPromise = fetch(`${API_BASE_URL}/auth/refresh`, { 
     method: 'POST', 
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken: currentRefreshToken }),
     credentials: 'include' 
-  }).then(r => {
+  }).then(async r => {
     isRefreshing = false;
-    return r.ok;
+    if (r.ok) {
+      const data = await r.json();
+      if (data?.data?.token) {
+        localStorage.setItem('auth_token', data.data.token);
+      }
+      if (data?.data?.refreshToken) {
+        localStorage.setItem('refresh_token', data.data.refreshToken);
+      }
+      return true;
+    }
+    return false;
   }).catch(() => {
     isRefreshing = false;
     return false;
@@ -27,7 +42,16 @@ interface RequestOptions extends RequestInit {
 
 async function request(endpoint: string, options: RequestOptions = {}) {
   const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
-  const response = await fetch(url, { ...options, credentials: 'include' });
+  
+  const headers = new Headers(options.headers || {});
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('auth_token');
+    if (token && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+  }
+
+  const response = await fetch(url, { ...options, headers, credentials: 'include' });
   
   const isAuthEndpoint = endpoint.includes('/auth/login') || endpoint.includes('/auth/register');
   if (response.status === 401 && typeof window !== 'undefined' && !isAuthEndpoint) {

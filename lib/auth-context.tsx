@@ -34,7 +34,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
-        setToken('authenticated');
+        const storedToken = localStorage.getItem('auth_token');
+        setToken(storedToken || 'authenticated');
       } catch {
         localStorage.removeItem('user');
       }
@@ -47,7 +48,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(profile => {
         if (profile) {
           setUser(profile as User);
-          setToken('authenticated');
+          const storedToken = localStorage.getItem('auth_token');
+          setToken(storedToken || 'authenticated');
           localStorage.setItem('user', JSON.stringify(profile));
         }
       })
@@ -62,11 +64,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response = await api.auth.login({ phone, password: pass });
     if (response?.user) {
       localStorage.setItem('user', JSON.stringify(response.user));
+      if (response.token) {
+        localStorage.setItem('auth_token', response.token);
+      }
+      if (response.refreshToken) {
+        localStorage.setItem('refresh_token', response.refreshToken);
+      }
 
       const freshProfile = await api.user.getMe();
       const finalUser = { ...response.user, ...freshProfile };
       setUser(finalUser);
-      setToken('authenticated');
+      setToken(response.token || 'authenticated');
       localStorage.setItem('user', JSON.stringify(finalUser));
 
       return true;
@@ -84,6 +92,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null);
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
   };
 
   const updateUser = useCallback((updates: Partial<User>) => {
