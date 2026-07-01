@@ -17,6 +17,10 @@ type BetStatus = 'won' | 'lost' | 'pending' | 'void';
 interface BetRecord {
   _id: string;
   createdAt: string;
+  recordType?: 'sports' | 'casino';
+  initialBalance?: number;
+  finalBalance?: number;
+  gameName?: string;
   selections?: {
     matchId: number;
     homeTeam: string;
@@ -231,6 +235,52 @@ export default function BetsPage() {
             </div>
           ) : (
             filtered.map((bet, i) => {
+              if (bet.recordType === 'casino') {
+                const netResult = (bet.finalBalance || 0) - (bet.initialBalance || 0);
+                const isPositive = netResult > 0;
+                const isNegative = netResult < 0;
+                return (
+                  <div
+                    key={bet._id}
+                    className="cassanova-card p-6 md:p-8 cursor-pointer gpu-layer"
+                    style={{ transitionDelay: `${i * 50}ms` }}
+                  >
+                    <div className="flex items-start justify-between mb-6 gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center space-x-3 mb-2 flex-wrap gap-y-2">
+                          <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest shrink-0">
+                            {mounted ? new Date(bet.createdAt).toLocaleString('en-GB', { hour12: false }) : '...'}
+                          </span>
+                          <span className="text-[8px] font-black text-purple-600 uppercase tracking-widest bg-purple-600/10 px-2 py-0.5 rounded-full shrink-0">
+                            CASINO SESSION
+                          </span>
+                        </div>
+                        <div className="text-sm md:text-base font-black text-white uppercase tracking-tight line-clamp-2 leading-tight">
+                          {bet.gameName || 'Slot Game'}
+                        </div>
+                      </div>
+                      <div className="shrink-0 flex items-center space-x-2 px-3 py-1.5 rounded-full border text-[8px] font-black uppercase tracking-widest bg-gray-500/10 text-gray-400 border-gray-500/20">
+                        <span className="whitespace-nowrap">Terminé</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between pt-6 border-t border-white/5 gap-y-6">
+                      <div className="flex items-center space-x-8 md:space-x-12">
+                      </div>
+                      
+                      <div className="text-left sm:text-right min-w-[120px]">
+                        <div className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">
+                          Résultat Net
+                        </div>
+                        <div className="text-sm md:text-lg font-black text-white truncate">
+                          {isPositive ? '+' : ''}{formatTND(netResult)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
               const cfg = STATUS_CONFIG[(bet.status.toLowerCase()) as BetStatus] || STATUS_CONFIG.pending;
               const StatusIcon = cfg.icon;
 

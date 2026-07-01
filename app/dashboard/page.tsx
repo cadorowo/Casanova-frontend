@@ -132,16 +132,16 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-                <Link href="/deposit" className="group flex-grow bg-[#d3a936] pl-8 pr-2 py-2 flex items-center justify-between min-w-0 min-h-[60px] rounded-[2rem] transition-all hover:bg-[#e1c22d] hover:scale-[1.02]">
-                  <span className="text-black font-black uppercase text-[11px] tracking-[0.3em] truncate">Ajouter des Fonds (+)</span>
+                <Link href="/deposit" className="group flex-1 bg-[#d3a936] pl-8 pr-2 py-2 flex items-center justify-between min-w-0 min-h-[60px] rounded-[2rem] transition-all hover:bg-[#e1c22d] hover:scale-[1.02]">
+                  <span className="text-black font-black uppercase text-[11px] tracking-[0.3em] truncate">Déposer (+)</span>
                   <div className="w-12 h-12 bg-black/10 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform shrink-0">
                     <Plus size={20} className="text-black" />
                   </div>
                 </Link>
-                <Link href="/withdraw" className="group flex-grow bg-blue-600 pl-8 pr-2 py-2 flex items-center justify-between min-w-0 min-h-[60px] rounded-[2rem] transition-all hover:bg-blue-500 hover:scale-[1.02]">
+                <Link href="/withdraw" className="group flex-1 bg-blue-600 pl-8 pr-2 py-2 flex items-center justify-between min-w-0 min-h-[60px] rounded-[2rem] transition-all hover:bg-blue-500 hover:scale-[1.02]">
                   <span className="text-white font-black uppercase text-[11px] tracking-[0.3em] truncate">Retrait (-)</span>
                   <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform shrink-0">
-                    <ArrowUpRight size={20} className="text-white" />
+                    <ArrowDown size={20} className="text-white" />
                   </div>
                 </Link>
               </div>
