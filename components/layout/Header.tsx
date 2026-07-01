@@ -95,16 +95,16 @@ export default function Header() {
       </div>
 
       {}
-      <div className="hidden md:flex max-w-[1800px] mx-auto items-center justify-between pointer-events-auto relative">
+      <div className="hidden md:flex max-w-[1800px] mx-auto items-center justify-between pointer-events-none relative">
         
-        {}
+        {/* Left Space for alignment */}
         <div />
 
-        {}
+        {/* Center Space for alignment */}
         <div />
 
-        {}
-        <div className="flex items-center shrink-0">
+        {/* Right side - Wallet & Actions */}
+        <div className="flex items-center shrink-0 pointer-events-auto">
           {mounted && isAuthenticated ? (
             <div className="bezel-shell p-1 rounded-full animate-reveal">
               <div className="bezel-core bg-black/90 backdrop-blur-2xl rounded-full px-2 py-1.5 flex items-center justify-between w-[340px] h-[52px] overflow-hidden">
