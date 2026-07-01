@@ -242,15 +242,11 @@ export const mapUltraToUI = (m: SportMatch) => {
   };
 };
 
-export default function useMatches(sport?: string | null, fallbackData?: SportMatch[]) {
+export default function useMatches(sport?: string | null) {
   const { data, error, isLoading, mutate } = useSWR<SportMatch[]>(
     'live-matches',
     () => api.games.getMatches(sport || undefined),
-    { 
-      fallbackData,
-      revalidateOnFocus: false, 
-      revalidateOnMount: true 
-    } 
+    { revalidateOnFocus: false, revalidateOnMount: true } 
   );
 
   useEffect(() => {

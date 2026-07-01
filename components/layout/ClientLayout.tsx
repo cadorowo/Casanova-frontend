@@ -117,8 +117,8 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
         {}
         <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
-           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-900/10 blur-[150px] rounded-full translate-x-1/2 translate-y-[-50%]" />
-           <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-yellow-900/5 blur-[150px] rounded-full translate-x-[-50%] translate-y-[50%]" />
+           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-900/10 blur-[150px] rounded-full translate-x-1/2 translate-y-[-50%] hidden md:block" />
+           <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-yellow-900/5 blur-[150px] rounded-full translate-x-[-50%] translate-y-[50%] hidden md:block" />
         </div>
       </div>
     </div>

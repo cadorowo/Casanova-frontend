@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 86400,
+    deviceSizes: [390, 430, 768, 1280],
     remotePatterns: imageHostnames.map(hostname => ({
       protocol: 'https',
       hostname,

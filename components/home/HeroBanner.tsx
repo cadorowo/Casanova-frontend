@@ -20,7 +20,7 @@ export default function HeroBanner() {
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[#000000]" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#000000] via-transparent to-[#000000] opacity-80" />
-        <div className="absolute top-1/4 right-0 w-[800px] h-[800px] bg-white/[0.02] rounded-full blur-[150px] animate-pulse" />
+        <div className="absolute top-1/4 right-0 w-[800px] h-[800px] bg-white/[0.02] rounded-full blur-[150px]" />
       </div>
 
       <div className="container mx-auto px-4 md:px-12 relative z-10">

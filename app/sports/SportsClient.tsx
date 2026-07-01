@@ -50,14 +50,14 @@ const SportsSkeleton = () => (
   </div>
 );
 
-export default function SportsClient({ initialMatches }: { initialMatches?: any[] }) {
+export default function SportsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sportParam = searchParams.get('sport');
   const searchParam = searchParams.get('search')?.toLowerCase() || '';
   
   const { user: authUser, openLogin, openRegister } = useAuth();
-  const { matches, isLoading } = useMatches(sportParam, initialMatches);
+  const { matches, isLoading } = useMatches(sportParam);
   const { toggleSelection, isInSlip } = useBet();
 
   const [showOnlyLive, setShowOnlyLive] = useState(false);

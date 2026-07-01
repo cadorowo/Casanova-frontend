@@ -362,9 +362,9 @@ export default function DashboardPage() {
                           statusColor = 'bg-green-500/10 border-green-500/20 text-green-500';
                           displayStatus = 'GAGNÉ';
                         } else if (item.type.includes('loss') || (item.originalType === 'casino' && item.type === 'bet')) {
-                          Icon = Target;
-                          iconBg = 'bg-red-500/10';
-                          iconColor = 'text-red-500';
+                          Icon = item.originalType === 'sports' ? ReceiptText : Target;
+                          iconBg = 'bg-gray-500/10';
+                          iconColor = 'text-gray-400';
                           amountSign = '-';
                           statusColor = 'bg-red-500/10 border-red-500/20 text-red-500';
                           displayStatus = item.type === 'bet' ? 'JOUÉ' : 'PERDU';
@@ -403,7 +403,7 @@ export default function DashboardPage() {
                                 <div className="flex flex-1 min-w-0 items-center justify-between md:justify-start pr-2">
                                    <div className="flex flex-col md:flex-row md:items-center min-w-0 flex-1 gap-1 md:gap-0">
                                       <div className="md:w-[200px] flex items-center space-x-2 min-w-0 shrink-0">
-                                         <span className="text-sm md:text-base font-black uppercase tracking-tighter truncate text-white">
+                                         <span className="text-sm md:text-base font-black uppercase tracking-tighter truncate text-gray-500 md:text-white">
                                             {label}
                                          </span>
                                       </div>
