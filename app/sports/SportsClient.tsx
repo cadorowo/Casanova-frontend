@@ -161,7 +161,7 @@ export default function SportsPage({ initialMatches }: { initialMatches?: any })
                       className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-colors duration-150 flex items-center space-x-2 ${showOnlyLive ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' : 'text-gray-500 hover:text-gray-300'}`}
                     >
                       {matches?.some(m => m.live) && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-live-breath" />
+                        <div className={`w-1.5 h-1.5 rounded-full animate-live-breath ${showOnlyLive ? 'bg-black' : 'bg-red-500'}`} />
                       )}
                       <span>Live</span>
                     </button>
