@@ -9,6 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')),
   title: "Casanova | Paris Sportifs d'Élite & Casino Premium",
   description: "La destination ultime pour les paris sportifs et les jeux de casino premium. Cotes en temps réel, paiements instantanés en TND et une expérience d'élite pour les joueurs professionnels. Rejoignez l'Arène Casanova.",
   icons: {
