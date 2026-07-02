@@ -66,9 +66,15 @@ export default function SportsPage({ initialMatches }: { initialMatches?: any })
 
   useEffect(() => {
     const authAction = searchParams.get('auth');
-    if (authAction === 'login') openLogin();
-    else if (authAction === 'register') openRegister();
-  }, [searchParams, openLogin, openRegister]);
+    if (authAction === 'login' || authAction === 'register') {
+      if (authAction === 'login') openLogin();
+      else if (authAction === 'register') openRegister();
+      
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('auth');
+      router.replace(params.toString() ? `?${params.toString()}` : '/sports', { scroll: false });
+    }
+  }, [searchParams, openLogin, openRegister, router]);
 
   const nations = matches 
     ? Array.from(new Set(
