@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { User } from '@/types';
 import { api } from './api';
 import { useSocketSync } from './use-socket-sync';
@@ -28,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -122,6 +124,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Failed to refresh balance:', error);
     }
   }, [user, updateUser]);
+
+  useEffect(() => {
+    if (user) {
+      refreshBalance();
+    }
+  }, [pathname]);
 
   const openLogin = () => {
     setIsRegisterOpen(false);
